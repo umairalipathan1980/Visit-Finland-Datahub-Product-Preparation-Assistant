@@ -201,18 +201,3 @@ bun run build
 
 Default tests use fixtures and mocks; they do not call live websites or Foundry.
 
-## Security and limitations
-
-- Each run uses an isolated workspace and fixed artifact allowlist.
-- Python controls agent-accessible paths, subprocess arguments, and file writes.
-- Source content is untrusted and cannot override workflow instructions.
-- URL validation blocks unsupported schemes, private networks, metadata targets, disallowed domains, and unsafe redirects.
-- Retrieval uses static HTTP; it does not render JavaScript or access authenticated pages.
-- The workflow supports Accommodation and Shops only.
-- A run accepts up to 10 seed URLs, 25 selected or stored pages, and two expansion calls.
-- Evidence uses lossless 44,000-character chunks, 52,000-character tool responses, and a 2,400,000-character run limit.
-- Uploads are limited to 10 PDF or DOCX files, 20 MiB each, and 50 MiB total.
-- OCR detection is supported; OCR processing is not.
-- Image retrieval, general web search, exhaustive crawling, duplicate search, and automatic DataHub submission are not implemented.
-- External links may be stored as values, but external content is not fetched or cited.
-- Credentials are never included in prompts or artifacts.

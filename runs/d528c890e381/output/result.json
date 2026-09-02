@@ -1,0 +1,238 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-shops-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T00:00:00Z"
+  },
+  "product_type": "shops",
+  "scope_decision_ref": "resolved: Hanko marketplace (p001 en, p002 fi)",
+  "fields": {
+    "name": {
+      "fi": {
+        "status": "found",
+        "value": "Hangon Kauppatori",
+        "evidence": [
+          {
+            "source_id": "p002",
+            "locator": "line 164",
+            "excerpt": "Hangon Kauppatori",
+            "quote_verified": true
+          }
+        ]
+      },
+      "en": {
+        "status": "found",
+        "value": "Hanko marketplace",
+        "evidence": [
+          {
+            "source_id": "p001",
+            "locator": "line 164",
+            "excerpt": "Hanko marketplace",
+            "quote_verified": true
+          }
+        ]
+      }
+    },
+    "description": {
+      "fi": {
+        "status": "found",
+        "value": "Kauppatori sijaitsee sillan kupeessa Nycanderinkadulla. Tori on auki ymp\u00e4ri vuoden. Torilla myynniss\u00e4 l\u00e4hiruokaa, kalaa ja vihanneksia sek\u00e4 kes\u00e4ll\u00e4 taimia, marjoja ym. Torilla toimii my\u00f6s kev\u00e4\u00e4st\u00e4 my\u00f6h\u00e4iseen syksyyn",
+        "evidence": [
+          {
+            "source_id": "p002",
+            "locator": "lines 165-166",
+            "excerpt": "Kauppatori sijaitsee sillan kupeessa Nycanderinkadulla. Tori on auki ymp\u00e4ri vuoden. Torilla myynniss\u00e4 l\u00e4hiruokaa, kalaa ja vihanneksia sek\u00e4 kes\u00e4ll\u00e4 taimia, marjoja ym. Torilla toimii my\u00f6s kev\u00e4\u00e4st\u00e4 my\u00f6h\u00e4iseen syksyyn",
+            "quote_verified": true
+          }
+        ],
+        "notes": "Sentence continues into a mention of a separate seasonal caf\u00e9 (Angkhanan torikahvila), recorded under out_of_type_facilities and intentionally excluded from this shop's description value to avoid merging a different product's facts."
+      },
+      "en": {
+        "status": "missing",
+        "notes": "The English product page (p001) has no dedicated description paragraph equivalent to the Finnish page; it only contains a location/hours sentence ('Open all year around by the railway bridge: Tuesday, Thursday and Saturday at 6.00 am to 1 pm'), which has instead been used for the opening_hours field. No separate descriptive text about products sold is present in English."
+      }
+    },
+    "address": {
+      "status": "review",
+      "value": {
+        "street": "Nycanderinkatu",
+        "city": "Hanko",
+        "postal_code": null,
+        "country": "Finland",
+        "location_note": "by the railway bridge / sillan kupeessa"
+      },
+      "evidence": [
+        {
+          "source_id": "p002",
+          "locator": "line 165",
+          "excerpt": "Kauppatori sijaitsee sillan kupeessa Nycanderinkadulla."
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 165",
+          "excerpt": "Open all year around by the railway bridge:"
+        }
+      ],
+      "notes": "Street name (Nycanderinkatu) and a location descriptor (by the railway bridge) are explicit, but no house number, postal code, or explicit city/country statement appear in the product page text itself; city/country are contextual (whole site is about Hanko, Finland) rather than stated in this specific paragraph. Marked review pending curator confirmation of a complete postal address."
+    },
+    "coordinates": {
+      "status": "review",
+      "value": {
+        "latitude": 59.8246165,
+        "longitude": 22.9639141
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "Google Maps link URL",
+          "excerpt": "https://www.google.com/maps/place/Hanko+Kauppatori,+10900+Hanko/@59.8246265,22.9551379,15z/data=!3m1!4b1!4m5!3m4!1s0x468ce25e38482ba3:0xfec9c9935eee7261!8m2!3d59.8246165!4d22.9639141"
+        }
+      ],
+      "alternatives": [
+        {
+          "value": {
+            "latitude": 59.8246265,
+            "longitude": 22.9551379
+          },
+          "evidence": [
+            {
+              "source_id": "p001",
+              "locator": "Google Maps link URL",
+              "excerpt": "https://www.google.com/maps/place/Hanko+Kauppatori,+10900+Hanko/@59.8246265,22.9551379,15z/data=!3m1!4b1!4m5!3m4!1s0x468ce25e38482ba3:0xfec9c9935eee7261!8m2!3d59.8246165!4d22.9639141"
+            }
+          ],
+          "reason": "The same Google Maps URL encodes two coordinate pairs: a map-viewport-center pair (@lat,lng) and a place-marker pair (3d/4d). The marker pair was used as the primary value; the viewport-center pair is kept as an alternative since the URL does not explicitly label which is authoritative."
+        }
+      ],
+      "notes": "Coordinates were derived from a Google Maps hyperlink URL rather than from explicit page prose stating coordinates; curator should verify the precise marketplace pin location."
+    },
+    "contact": {
+      "status": "found",
+      "value": {
+        "phone": "+358 (0)40 533 4040",
+        "email": null,
+        "website": null
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 167",
+          "excerpt": "+358 (0)40 533 4040",
+          "quote_verified": true
+        }
+      ],
+      "alternatives": [
+        {
+          "value": {
+            "phone": "040 533 4040"
+          },
+          "evidence": [
+            {
+              "source_id": "p002",
+              "locator": "line 168",
+              "excerpt": "040 533 4040"
+            }
+          ],
+          "reason": "Finnish-language page lists the same phone number in local format without the +358 country code; treated as a formatting variant of the same number, not a conflicting fact."
+        }
+      ],
+      "notes": "No email or website specific to the marketplace itself was found on either page; the general tourist office email/phone belong to a different entity (Hanko Tourist Office) and were not attributed to this product."
+    },
+    "categories": {
+      "status": "review",
+      "value": [
+        "market"
+      ],
+      "evidence": [
+        {
+          "source_id": "p002",
+          "locator": "line 165",
+          "excerpt": "Torilla myynniss\u00e4 l\u00e4hiruokaa, kalaa ja vihanneksia sek\u00e4 kes\u00e4ll\u00e4 taimia, marjoja ym."
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 164",
+          "excerpt": "Hanko marketplace"
+        }
+      ],
+      "notes": "Category classification is always review/missing per policy. 'Market' was chosen as the closest match in the shops taxonomy for an open-air marketplace selling local food, fish, vegetables and seasonal produce."
+    },
+    "accessibility": {
+      "status": "missing",
+      "notes": "No accessibility statement was found on the marketplace's own product pages (p001, p002). The site's general Accessibility page (p003) discusses accessible accommodation, sights, caf\u00e9s and restaurants, and one specific beach location, but does not mention the marketplace; per policy, general site accessibility content cannot be attributed to this specific product without an explicit tie."
+    },
+    "sustainability_label": {
+      "status": "review",
+      "value": "Green Choice / Vihre\u00e4 valinta (tentative)",
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 170",
+          "excerpt": "Green choise"
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 171",
+          "excerpt": "Vihre\u00e4 valinta"
+        }
+      ],
+      "notes": "A 'Green choise'/'Vihre\u00e4 valinta' link appears in the related-links panel specifically on this product's own page (this link/category does not appear on other analysed pages, e.g. p003), suggesting a possible sustainability designation tag for this listing. However, no explicit sentence states that the marketplace holds this label, so it is marked review pending curator confirmation rather than found."
+    },
+    "stf_status": {
+      "status": "missing",
+      "notes": "No mention of Sustainable Travel Finland certification for the marketplace was found on the analysed pages."
+    },
+    "opening_hours": {
+      "status": "review",
+      "value": {
+        "regular": [
+          {
+            "days": [
+              "tuesday",
+              "thursday",
+              "saturday"
+            ],
+            "opens": "06:00",
+            "closes": "13:00"
+          }
+        ],
+        "notes": "Open all year around (source: 'Open all year around by the railway bridge' / 'Tori on auki ymp\u00e4ri vuoden.')"
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "lines 165-166",
+          "excerpt": "Open all year around by the railway bridge:\nTuesday, Thursday and Saturday at 6.00 am to 1 pm",
+          "quote_verified": false
+        },
+        {
+          "source_id": "p002",
+          "locator": "lines 166-167",
+          "excerpt": "Ti, to, la klo 6-13.",
+          "quote_verified": true
+        }
+      ],
+      "notes": "quote_not_verified"
+    },
+    "languages_spoken": {
+      "status": "missing",
+      "notes": "Neither product page states which languages are spoken by marketplace staff/vendors; presence of fi/sv/en site navigation reflects the tourism portal's own languages, not the marketplace's staff capabilities."
+    },
+    "images": {
+      "status": "not_in_scope"
+    }
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "rule_id": "quote_not_verified",
+        "field": "opening_hours",
+        "locale": null,
+        "message": "one or more evidence excerpts could not be verified against stored source text; downgraded to review"
+      }
+    ]
+  }
+}

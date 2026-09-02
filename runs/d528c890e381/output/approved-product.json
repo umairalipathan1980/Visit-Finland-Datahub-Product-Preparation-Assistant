@@ -1,0 +1,46 @@
+{
+  "run_metadata": {
+    "approved_at": "2026-09-02T19:13:02.569883+00:00",
+    "source": "user-approved"
+  },
+  "product_type": "shops",
+  "fields": {
+    "name": {
+      "fi": "Hangon Kauppatori",
+      "en": "Hanko marketplace"
+    },
+    "description": {
+      "fi": "Kauppatori sijaitsee sillan kupeessa Nycanderinkadulla. Tori on auki ymp\u00e4ri vuoden. Torilla myynniss\u00e4 l\u00e4hiruokaa, kalaa ja vihanneksia sek\u00e4 kes\u00e4ll\u00e4 taimia, marjoja ym. Torilla toimii my\u00f6s kev\u00e4\u00e4st\u00e4 my\u00f6h\u00e4iseen syksyyn"
+    },
+    "address": {
+      "street": "Nycanderinkatu",
+      "city": "Hanko",
+      "country": "Finland"
+    },
+    "coordinates": {
+      "latitude": 59.8246165,
+      "longitude": 22.9639141
+    },
+    "contact": {
+      "phone": "+358 (0)40 533 4040"
+    },
+    "categories": [
+      "market"
+    ],
+    "sustainability_label": "Green Choice / Vihre\u00e4 valinta (tentative)",
+    "opening_hours": {
+      "regular": [
+        {
+          "days": [
+            "tuesday",
+            "thursday",
+            "saturday"
+          ],
+          "opens": "06:00",
+          "closes": "13:00"
+        }
+      ],
+      "notes": "Open all year around (source: 'Open all year around by the railway bridge' / 'Tori on auki ymp\u00e4ri vuoden.')"
+    }
+  }
+}

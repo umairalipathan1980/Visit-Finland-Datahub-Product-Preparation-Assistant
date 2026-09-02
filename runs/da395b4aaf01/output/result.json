@@ -1,0 +1,271 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-accommodation-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T12:00:00Z"
+  },
+  "product_type": "accommodation",
+  "scope_decision_ref": "resolved:villa-maija",
+  "fields": {
+    "name": {
+      "fi": {
+        "status": "found",
+        "value": "Villa Maija",
+        "evidence": [
+          {
+            "source_id": "p001",
+            "locator": "characters 1-7119",
+            "excerpt": "Villa Maija",
+            "quote_verified": true
+          }
+        ]
+      },
+      "en": {
+        "status": "missing"
+      }
+    },
+    "description": {
+      "fi": {
+        "status": "found",
+        "value": "Villa Maija on yksi Hangon tunnetuimmista pitsihuviloista ja avoinna vuoden jokaisena p\u00e4iv\u00e4n\u00e4. Villa Maija tarjoaa loistavan mahdollisuuden nopeaan irtiottoon arjesta. Y\u00f6pyminen aidossa 1800-luvun huvilassa Hangon paraatipaikalla on ainutlaatuinen el\u00e4mys. Tullijohtaja, hovineuvos Frans von Haartman rakennutti Villa Maijan vuonna 1888.",
+        "evidence": [
+          {
+            "source_id": "p001",
+            "locator": "characters 1-7119",
+            "excerpt": "Villa Maija on yksi Hangon tunnetuimmista pitsihuviloista ja avoinna vuoden jokaisena p\u00e4iv\u00e4n\u00e4.",
+            "quote_verified": true
+          },
+          {
+            "source_id": "p001",
+            "locator": "characters 1-7119",
+            "excerpt": "Tullijohtaja, hovineuvos Frans von Haartman rakennutti Villa Maijan vuonna 1888.",
+            "quote_verified": true
+          }
+        ]
+      },
+      "en": {
+        "status": "missing"
+      }
+    },
+    "address": {
+      "status": "found",
+      "value": {
+        "street": "Appelgrenintie 7",
+        "postal_code": "10900",
+        "city": "Hanko"
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Appelgrenintie 7, 10900 Hanko",
+          "quote_verified": true
+        }
+      ]
+    },
+    "coordinates": {
+      "status": "found",
+      "value": {
+        "latitude": 59.8236528,
+        "longitude": 22.9718909
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Appelgrenintie 7, 10900 Hanko -> https://www.google.com/maps/place/Appelgrenintie+7,+10900+Hanko/@59.8236528,22.9718909,1129m",
+          "quote_verified": true
+        }
+      ],
+      "notes": "Coordinates read literally from the Google Maps link URL stored in the page's LINKS section (not from a fetched external page)."
+    },
+    "contact": {
+      "status": "found",
+      "value": {
+        "email": "hello@hangofarm.fi",
+        "phone": "+358 50 505 2013",
+        "website": "https://hangofarm.fi/loma-asunto-hanko/hotelli-villa-maija-hanko"
+      },
+      "evidence": [
+        {
+          "source_id": "p002",
+          "locator": "characters 1-3352",
+          "excerpt": "hello@hangofarm.fi",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p002",
+          "locator": "characters 1-3352",
+          "excerpt": "+358 50 505 2013",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Villa Maija -> https://hangofarm.fi/loma-asunto-hanko/hotelli-villa-maija-hanko",
+          "quote_verified": true
+        }
+      ],
+      "notes": "Email/phone cited from p002's 'Hang\u00f6 Farm majoitustoiminta' (accommodation business) contact block, distinct from the Deli restaurant's separate contact block on the same page."
+    },
+    "categories": {
+      "status": "review",
+      "value": [
+        "apartment"
+      ],
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Villa Maijan vanhat huoneet on saneerattu ylellisiksi puuhuvila-asunnoiksi."
+        }
+      ],
+      "alternatives": [
+        {
+          "value": [
+            "guest_house"
+          ],
+          "evidence": [
+            {
+              "source_id": "p001",
+              "locator": "characters 1-7119",
+              "excerpt": "Huvilamajoitus Villa Maija Hanko"
+            }
+          ],
+          "reason": "Villa Maija could also be classified as a guest house/villa-style lodging rather than self-contained apartments, since the PoC taxonomy has no dedicated 'villa' category; curator judgment needed to pick the closer fit."
+        }
+      ],
+      "notes": "PoC taxonomy has no exact 'villa' category. 'apartment' is chosen because the source repeatedly calls the units 'huoneistoja'/'asuntoja' (apartments); category status is always review per policy, never found."
+    },
+    "accessibility": {
+      "status": "missing",
+      "value": "not_specified"
+    },
+    "sustainability_label": {
+      "status": "missing",
+      "value": "not_specified"
+    },
+    "stf_status": {
+      "status": "missing",
+      "value": "not_specified"
+    },
+    "capacity": {
+      "status": "found",
+      "value": {
+        "rooms": 4
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Villa Maija 1 Eastside",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Majoitamme hieman seurueesta riippuen 12-19 henke\u00e4.",
+          "quote_verified": true
+        }
+      ],
+      "notes": "Villa Maija has 4 apartments (Eastside, Southside, Westside, Upperside). Overall stated guest capacity is 12-19 people depending on group configuration; exact bed count per apartment is not stated on the fetched pages, so 'beds' is left out rather than guessed."
+    },
+    "pricing": {
+      "status": "missing",
+      "notes": "No nightly/room rate is stated on the fetched pages; rates are presumably set only inside the external Guesty booking engine, which was not fetched. A separate breakfast add-on is priced at 18,50 EUR/person (source p001: 'Aamupala maksaa 18,50 euroa / henkil\u00f6.'), but that is an optional extra service, not the accommodation's own room rate, so it is not used to fill this field."
+    },
+    "booking_url": {
+      "status": "found",
+      "value": "https://villamaija.guestybookings.com/",
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Varaa majoitus -> https://villamaija.guestybookings.com/",
+          "quote_verified": true
+        }
+      ]
+    },
+    "availability": {
+      "status": "found",
+      "value": {
+        "open_year_round": true,
+        "minimum_stay_nights": 1,
+        "notes": "Kes\u00e4kuu-elokuu (June-August) minimum stay rises to 3 nights; shorter stays may be opened in summer if gaps remain between existing bookings."
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Villa Maija on auki vuoden jokaisena p\u00e4iv\u00e4n\u00e4.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Minimi y\u00f6pyminen on yksi y\u00f6, ja kes\u00e4ll\u00e4 kes\u00e4kuu-elokuu kolme y\u00f6t\u00e4.",
+          "quote_verified": true
+        }
+      ]
+    },
+    "opening_hours": {
+      "status": "missing"
+    },
+    "amenities": {
+      "status": "found",
+      "value": [
+        "private bathroom (shower & wc) in every apartment",
+        "air conditioning",
+        "washing machine",
+        "fully equipped kitchen",
+        "shared terrace",
+        "sauna (in apartment 2 Southside only)",
+        "breakfast available for order (extra charge)"
+      ],
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Kaikissa huoneistoissa on omat kylpyhuoneet (suihku ja wc) sek\u00e4 uudenaikaiset ilmastointilaitteet sek\u00e4 pyykkikone.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Huoneistossa nro 2 Southside on my\u00f6s oma sauna.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Uudistuksen yhteydess\u00e4 jokaiseen huoneistoon rakennettiin my\u00f6s t\u00e4ysin varusteltu keitti\u00f6.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "kaikki vieraat saavat k\u00e4ytt\u00e4\u00e4 yhteist\u00e4 terassia",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "characters 1-7119",
+          "excerpt": "Villa Maijassa voit tilata aamupalan kes\u00e4ll\u00e4 joka p\u00e4iv\u00e4 (toukokuu-elokuu).",
+          "quote_verified": true
+        }
+      ]
+    },
+    "languages_spoken": {
+      "status": "missing"
+    },
+    "images": {
+      "status": "not_in_scope"
+    }
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-accommodation-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T19:03:28.490158+00:00"
+  },
+  "product_type": "accommodation",
+  "fields": {
+    "name": {
+      "fi": "Bed & Breakfast Villa Aurora",
+      "en": "Bed & Breakfast Villa Aurora"
+    },
+    "description": {
+      "fi": "Majoitusyritys myy majoituspalvelua sek\u00e4 tuottaa oheispalveluja kuten esim. opas- ja kuvauspalveluja. Lis\u00e4ksi erilaiset teematapahtumat ja -illat ovat ohjelmistossa. Huoneet, joita on seitsem\u00e4n ovat kahden hengen huoneita, joista on puutarha- tai puiston\u00e4kym\u00e4t. Kaikissa huoneissa on oma suihku/WC. Villa Aurora voi majoittaa my\u00f6s liikuntaesteisi\u00e4, sill\u00e4 kiinteist\u00f6 on esteet\u00f6n ja varustettu mm. hissill\u00e4. Rakennuksessa on my\u00f6s erillinen suihku ja WC liikuntaesteiset huomioon ottaen. Toiminta on ymp\u00e4rivuotista.",
+      "en": "Bed & Breakfast that also offers guide- and photograph services. There are seven double rooms, from which there are garden or park view. All rooms have their own showers and toilets. Villa Aurora is also accessible. Open all year around."
+    },
+    "address": {
+      "street": "Vartiovuorentie 4",
+      "postal_code": "10900",
+      "city": "Hanko"
+    },
+    "contact": {
+      "email": "villaaurorahanko@gmail.com",
+      "phone": "+358 44 9703750",
+      "website": "http://www.villaaurora.fi/"
+    },
+    "accessibility": "accessible",
+    "capacity": {
+      "rooms": 7
+    },
+    "availability": {
+      "open_year_round": true
+    },
+    "amenities": [
+      "Private shower/WC in every room",
+      "Air conditioning (AC)",
+      "Dog friendly",
+      "Kid friendly",
+      "Accessible facilities including a lift",
+      "Guide and photography services",
+      "Garden or park view"
+    ]
+  }
+}

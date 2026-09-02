@@ -2,11 +2,11 @@
 
 ## Introduction
 
-This application prepares evidence-grounded product records for the Visit Finland DataHub.
+This application creates evidence-grounded Visit Finland DataHub records for tourism products, including Accommodation and Shops, from website URLs and optional PDF or DOCX files. It produces reviewable JSON, Excel, Markdown, and source-reference artifacts. It does not submit records automatically.
 
-It currently supports Accommodation and Shops and produces reviewable JSON, Excel, Markdown, and source-reference artifacts. It does not submit records automatically.
+Tourism-related organizations need to upload this information to the Visit Finland DataHub, now operated by Business Finland, so their products are discoverable. Preparing it in the required format is time-consuming; this tool streamlines that work.
 
-The user selects a product type, such as Accommodation or Shops, and supplies one or more URLs with optional PDF or DOCX files. The tool analyzes the sources, combines their evidence, determines the product scope—such as the specific accommodation or shop represented—using predefined scope schemas, performs structured extraction against the selected schema, validates the record, and prepares outputs for entry into the Visit Finland DataHub, now operated by Business Finland.
+The user selects a product type, such as Accommodation or Shops, and supplies one or more URLs with optional PDF or DOCX files. The tool analyzes and combines the source evidence, determines the product scope (such as the specific accommodation or shop represented) using predefined scope schemas, performs structured extraction against the selected product schema, validates the record, and prepares outputs for entry into the DataHub.
 
 ## Architecture
 
@@ -114,11 +114,12 @@ Output files are created only when applicable. Successful runs promote verified 
 Install dependencies:
 
 ```powershell
-cd "C:\Users\h02317\Tools and apps\VisitFinland"
+# From the repository root
 python -m pip install -r requirements.txt
 
 cd frontend
 bun install
+cd ..
 ```
 
 ## Environment
@@ -149,7 +150,7 @@ Optimized workflow mode and nested Claude sessions are application defaults. Do 
 Backend:
 
 ```powershell
-cd "C:\Users\h02317\Tools and apps\VisitFinland"
+# From the repository root
 python -m app.main --preflight
 python -m uvicorn app.api:app --host 127.0.0.1 --port 8010
 ```
@@ -157,7 +158,7 @@ python -m uvicorn app.api:app --host 127.0.0.1 --port 8010
 Frontend, in a second terminal:
 
 ```powershell
-cd "C:\Users\h02317\Tools and apps\VisitFinland\frontend"
+cd frontend
 bun dev
 ```
 
@@ -189,7 +190,7 @@ Terminal statuses: `completed`, `scope_ambiguous`, `no_usable_sources`, `validat
 ## Test
 
 ```powershell
-cd "C:\Users\h02317\Tools and apps\VisitFinland"
+# From the repository root
 python -m pytest
 
 cd frontend

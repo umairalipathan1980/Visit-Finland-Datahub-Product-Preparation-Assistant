@@ -1,0 +1,52 @@
+{
+  "run_metadata": {
+    "approved_at": "2026-09-02T19:04:45.907747+00:00",
+    "source": "user-approved"
+  },
+  "product_type": "accommodation",
+  "fields": {
+    "name": {
+      "fi": "Bed & Breakfast Villa Aurora",
+      "en": "Bed & Breakfast Villa Aurora"
+    },
+    "description": {
+      "fi": "Majoitusyritys myy majoituspalvelua sek\u00e4 tuottaa oheispalveluja kuten esim. opas- ja kuvauspalveluja. Lis\u00e4ksi erilaiset teematapahtumat ja -illat ovat ohjelmistossa. Huoneet, joita on seitsem\u00e4n ovat kahden hengen huoneita, joista on puutarha- tai puiston\u00e4kym\u00e4t. Kaikissa huoneissa on oma suihku/WC. Villa Aurora voi majoittaa my\u00f6s liikuntaesteisi\u00e4, sill\u00e4 kiinteist\u00f6 on esteet\u00f6n ja varustettu mm. hissill\u00e4. Rakennuksessa on my\u00f6s erillinen suihku ja WC liikuntaesteiset huomioon ottaen. Toiminta on ymp\u00e4rivuotista.",
+      "en": "Bed & Breakfast that also offers guide- and photograph services. There are seven double rooms, from which there are garden or park view. All rooms have their own showers and toilets. Villa Aurora is also accessible. Open all year around."
+    },
+    "address": {
+      "street": "Vartiovuorentie 4",
+      "postal_code": "10900",
+      "city": "Hanko"
+    },
+    "coordinates": {
+      "latitude": 59.8239446,
+      "longitude": 22.9742483
+    },
+    "contact": {
+      "email": "villaaurorahanko@gmail.com",
+      "phone": "+358 44 9703750",
+      "website": "http://www.villaaurora.fi/"
+    },
+    "categories": [
+      "bed_and_breakfast"
+    ],
+    "accessibility": "accessible",
+    "sustainability_label": "not_specified",
+    "stf_status": "not_specified",
+    "capacity": {
+      "rooms": 7
+    },
+    "availability": {
+      "open_year_round": true
+    },
+    "amenities": [
+      "Private shower/WC in every room",
+      "Air conditioning (AC)",
+      "Dog friendly",
+      "Kid friendly",
+      "Accessible facilities including a lift",
+      "Guide and photography services",
+      "Garden or park view"
+    ]
+  }
+}

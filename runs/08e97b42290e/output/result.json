@@ -1,0 +1,331 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-accommodation-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T00:00:00Z"
+  },
+  "product_type": "accommodation",
+  "fields": {
+    "name": {
+      "fi": {
+        "status": "found",
+        "value": "Bed & Breakfast Villa Aurora",
+        "evidence": [
+          {
+            "source_id": "p002",
+            "locator": "line 164",
+            "excerpt": "Bed & Breakfast Villa Aurora",
+            "quote_verified": true
+          }
+        ]
+      },
+      "en": {
+        "status": "found",
+        "value": "Bed & Breakfast Villa Aurora",
+        "evidence": [
+          {
+            "source_id": "p001",
+            "locator": "line 164",
+            "excerpt": "Bed & Breakfast Villa Aurora",
+            "quote_verified": true
+          }
+        ]
+      }
+    },
+    "description": {
+      "fi": {
+        "status": "found",
+        "value": "Majoitusyritys myy majoituspalvelua sek\u00e4 tuottaa oheispalveluja kuten esim. opas- ja kuvauspalveluja. Lis\u00e4ksi erilaiset teematapahtumat ja -illat ovat ohjelmistossa. Huoneet, joita on seitsem\u00e4n ovat kahden hengen huoneita, joista on puutarha- tai puiston\u00e4kym\u00e4t. Kaikissa huoneissa on oma suihku/WC. Villa Aurora voi majoittaa my\u00f6s liikuntaesteisi\u00e4, sill\u00e4 kiinteist\u00f6 on esteet\u00f6n ja varustettu mm. hissill\u00e4. Rakennuksessa on my\u00f6s erillinen suihku ja WC liikuntaesteiset huomioon ottaen. Toiminta on ymp\u00e4rivuotista.",
+        "evidence": [
+          {
+            "source_id": "p002",
+            "locator": "line 165",
+            "excerpt": "Majoitusyritys myy majoituspalvelua sek\u00e4 tuottaa oheispalveluja kuten esim. opas- ja kuvauspalveluja. Lis\u00e4ksi erilaiset teematapahtumat ja -illat ovat ohjelmistossa. Huoneet, joita on seitsem\u00e4n ovat kahden hengen huoneita, joista on puutarha- tai puiston\u00e4kym\u00e4t. Kaikissa huoneissa on oma suihku/WC.",
+            "quote_verified": true
+          },
+          {
+            "source_id": "p002",
+            "locator": "line 166",
+            "excerpt": "Villa Aurora voi majoittaa my\u00f6s liikuntaesteisi\u00e4, sill\u00e4 kiinteist\u00f6 on esteet\u00f6n ja varustettu mm. hissill\u00e4. Rakennuksessa on my\u00f6s erillinen suihku ja WC liikuntaesteiset huomioon ottaen. Toiminta on ymp\u00e4rivuotista.",
+            "quote_verified": true
+          }
+        ]
+      },
+      "en": {
+        "status": "found",
+        "value": "Bed & Breakfast that also offers guide- and photograph services. There are seven double rooms, from which there are garden or park view. All rooms have their own showers and toilets. Villa Aurora is also accessible. Open all year around.",
+        "evidence": [
+          {
+            "source_id": "p001",
+            "locator": "line 165",
+            "excerpt": "Bed & Breakfast that also offers guide- and photograph services.",
+            "quote_verified": true
+          },
+          {
+            "source_id": "p001",
+            "locator": "line 166",
+            "excerpt": "There are seven double rooms, from which there are garden or park view. All rooms have their own showers and toilets. Villa Aurora is also accessible.",
+            "quote_verified": true
+          },
+          {
+            "source_id": "p001",
+            "locator": "line 167",
+            "excerpt": "Open all year around.",
+            "quote_verified": true
+          }
+        ]
+      }
+    },
+    "address": {
+      "status": "found",
+      "value": {
+        "street": "Vartiovuorentie 4",
+        "postal_code": "10900",
+        "city": "Hanko"
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 171",
+          "excerpt": "Vartiovuorentie 4, 10900 Hanko",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 170",
+          "excerpt": "Vartiovuorentie 4, 10900 Hanko",
+          "quote_verified": true
+        }
+      ],
+      "notes": "Region and country are not stated on either page; not extracted to avoid inventing facts."
+    },
+    "coordinates": {
+      "status": "review",
+      "value": {
+        "latitude": 59.8239446,
+        "longitude": 22.9742483
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 293",
+          "excerpt": "Vartiovuorentie 4, 10900 Hanko -> https://www.google.com/maps/place/B%26B+Villa+Aurora/@59.8239472,22.9720539,17z/data=!3m1!4b1!4m8!3m7!1s0x468ce261a1fbb65f:0x3aeb2eef3798df98!5m2!4m1!1i2!8m2!3d59.8239446!4d22.9742483"
+        }
+      ],
+      "alternatives": [
+        {
+          "value": {
+            "latitude": 59.8239472,
+            "longitude": 22.9720539
+          },
+          "evidence": [
+            {
+              "source_id": "p001",
+              "locator": "line 293",
+              "excerpt": "Vartiovuorentie 4, 10900 Hanko -> https://www.google.com/maps/place/B%26B+Villa+Aurora/@59.8239472,22.9720539,17z/data=!3m1!4b1!4m8!3m7!1s0x468ce261a1fbb65f:0x3aeb2eef3798df98!5m2!4m1!1i2!8m2!3d59.8239446!4d22.9742483"
+            }
+          ],
+          "reason": "The stored Google Maps link URL embeds two coordinate pairs: the @lat,lng map-center parameter (59.8239472, 22.9720539) and the !3d/!4d pin-marker parameter (59.8239446, 22.9742483). Both are visible in the same link; the pin coordinates are used as the primary value as they typically mark the exact business location, but this is a derived reading of a link string rather than an explicit stated coordinate, hence status review."
+        }
+      ],
+      "notes": "Coordinates were parsed from an embedded Google Maps link on the stored page, not from an explicit latitude/longitude statement."
+    },
+    "contact": {
+      "status": "found",
+      "value": {
+        "email": "villaaurorahanko@gmail.com",
+        "phone": "+358 44 9703750",
+        "website": "http://www.villaaurora.fi/"
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 169",
+          "excerpt": "villaaurorahanko@gmail.com",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 170",
+          "excerpt": "+358 44 9703750",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 292",
+          "excerpt": "villaaurora.fi -> http://www.villaaurora.fi/",
+          "quote_verified": true
+        }
+      ]
+    },
+    "categories": {
+      "status": "review",
+      "value": [
+        "bed_and_breakfast"
+      ],
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 164",
+          "excerpt": "Bed & Breakfast Villa Aurora"
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 174",
+          "excerpt": "Accomodations"
+        }
+      ],
+      "notes": "Category assignment is a classification judgment (per policy, categories are always review, never found). 'bed_and_breakfast' is the closest PoC taxonomy match to the business name and its 'Accomodations' tag."
+    },
+    "accessibility": {
+      "status": "found",
+      "value": "accessible",
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 166",
+          "excerpt": "Villa Aurora is also accessible.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 166",
+          "excerpt": "Villa Aurora voi majoittaa my\u00f6s liikuntaesteisi\u00e4, sill\u00e4 kiinteist\u00f6 on esteet\u00f6n ja varustettu mm. hissill\u00e4.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 173",
+          "excerpt": "Accessible accommodation",
+          "quote_verified": true
+        }
+      ]
+    },
+    "sustainability_label": {
+      "status": "missing"
+    },
+    "stf_status": {
+      "status": "missing"
+    },
+    "capacity": {
+      "status": "found",
+      "value": {
+        "rooms": 7
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 166",
+          "excerpt": "There are seven double rooms, from which there are garden or park view.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 165",
+          "excerpt": "Huoneet, joita on seitsem\u00e4n ovat kahden hengen huoneita, joista on puutarha- tai puiston\u00e4kym\u00e4t.",
+          "quote_verified": true
+        }
+      ],
+      "notes": "Total bed count is not explicitly stated; each of the 7 rooms is described as a double room, but no aggregate bed figure is given, so 'beds' is omitted rather than inferred."
+    },
+    "pricing": {
+      "status": "missing"
+    },
+    "booking_url": {
+      "status": "missing"
+    },
+    "availability": {
+      "status": "found",
+      "value": {
+        "open_year_round": true
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 167",
+          "excerpt": "Open all year around.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 166",
+          "excerpt": "Toiminta on ymp\u00e4rivuotista.",
+          "quote_verified": true
+        }
+      ]
+    },
+    "opening_hours": {
+      "status": "missing"
+    },
+    "amenities": {
+      "status": "found",
+      "value": [
+        "Private shower/WC in every room",
+        "Air conditioning (AC)",
+        "Dog friendly",
+        "Kid friendly",
+        "Accessible facilities including a lift",
+        "Guide and photography services",
+        "Garden or park view"
+      ],
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 166",
+          "excerpt": "All rooms have their own showers and toilets.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 172",
+          "excerpt": "AC",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 175",
+          "excerpt": "Dog friendly",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 176",
+          "excerpt": "Kid friendly",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 166",
+          "excerpt": "kiinteist\u00f6 on esteet\u00f6n ja varustettu mm. hissill\u00e4",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 165",
+          "excerpt": "Bed & Breakfast that also offers guide- and photograph services.",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 166",
+          "excerpt": "There are seven double rooms, from which there are garden or park view.",
+          "quote_verified": true
+        }
+      ]
+    },
+    "languages_spoken": {
+      "status": "missing",
+      "notes": "The site offers fi/sv/en language versions of this page, but that reflects website localization, not a stated claim about which languages staff/hosts speak, so it is not extracted as found/review evidence for this field."
+    },
+    "images": {
+      "status": "not_in_scope"
+    }
+  },
+  "scope_decision_ref": "resolved: Bed & Breakfast Villa Aurora (p001 en, p002 fi)",
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  }
+}

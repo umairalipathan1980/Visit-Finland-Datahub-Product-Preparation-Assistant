@@ -1,0 +1,261 @@
+[
+  {
+    "type": "tool_use",
+    "tool": "load_skill",
+    "recorded_at": "2026-09-02T19:07:12.934556+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_0_bootstrap",
+    "operation": "load_skill",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:07:12.942563+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_0_bootstrap",
+    "operation": "load_skill",
+    "state": "completed",
+    "duration_ms": 16,
+    "recorded_at": "2026-09-02T19:07:12.960154+00:00"
+  },
+  {
+    "type": "skill_loaded",
+    "skill_sha256": "fc7f6665a5d6243d4629f7d20784e0cbce216418cfad6fc616699b28f558c738",
+    "recorded_at": "2026-09-02T19:07:12.976666+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "prepare_sources",
+    "recorded_at": "2026-09-02T19:07:14.538617+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_1",
+    "operation": "validate_sources",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:07:14.558920+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_1",
+    "operation": "validate_sources",
+    "state": "completed",
+    "duration_ms": 281,
+    "recorded_at": "2026-09-02T19:07:14.837276+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_2",
+    "operation": "parse_documents",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:07:14.859904+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_2",
+    "operation": "parse_documents",
+    "state": "completed",
+    "duration_ms": 15,
+    "recorded_at": "2026-09-02T19:07:14.871899+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "fetch_seed_pages",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:07:14.884944+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "fetch_seed_pages",
+    "state": "completed",
+    "duration_ms": 797,
+    "recorded_at": "2026-09-02T19:07:15.680253+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "read_context_page",
+    "recorded_at": "2026-09-02T19:07:17.205290+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:07:17.222209+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "completed",
+    "duration_ms": 15,
+    "recorded_at": "2026-09-02T19:07:17.240949+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "fetch_selected_pages",
+    "detail": "2 selected links",
+    "recorded_at": "2026-09-02T19:07:28.679258+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "fetch_selected_pages",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:07:28.707760+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "fetch_selected_pages",
+    "state": "completed",
+    "duration_ms": 906,
+    "recorded_at": "2026-09-02T19:07:29.617628+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "read_context_page",
+    "recorded_at": "2026-09-02T19:07:30.988614+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:07:31.003624+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "completed",
+    "duration_ms": 15,
+    "recorded_at": "2026-09-02T19:07:31.018622+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "read_context_page",
+    "recorded_at": "2026-09-02T19:07:32.725190+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:07:32.739273+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "completed",
+    "duration_ms": 16,
+    "recorded_at": "2026-09-02T19:07:32.752520+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_4",
+    "operation": "determine_scope",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:09:32.353181+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "record_scope",
+    "recorded_at": "2026-09-02T19:09:32.369117+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_4",
+    "operation": "determine_scope",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:09:32.401566+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_4",
+    "operation": "record_scope",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:09:32.421832+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_4",
+    "operation": "record_scope",
+    "state": "completed",
+    "duration_ms": 16,
+    "recorded_at": "2026-09-02T19:09:32.435476+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "submit_extraction",
+    "detail": "submission 1",
+    "recorded_at": "2026-09-02T19:09:59.963967+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_5",
+    "operation": "submit_extraction",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:09:59.976877+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_5",
+    "operation": "submit_extraction",
+    "state": "failed",
+    "duration_ms": 218,
+    "recorded_at": "2026-09-02T19:10:00.196898+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "submit_extraction",
+    "detail": "submission 2",
+    "recorded_at": "2026-09-02T19:10:25.938507+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_6",
+    "operation": "submit_extraction",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:10:25.953516+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_6",
+    "operation": "submit_extraction",
+    "state": "completed",
+    "duration_ms": 219,
+    "recorded_at": "2026-09-02T19:10:26.167018+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "finalize_outputs",
+    "recorded_at": "2026-09-02T19:10:51.434410+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_7",
+    "operation": "finalize_outputs",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:10:51.446040+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_7",
+    "operation": "finalize_outputs",
+    "state": "completed",
+    "duration_ms": 516,
+    "recorded_at": "2026-09-02T19:10:51.954945+00:00"
+  },
+  {
+    "type": "done",
+    "status": "completed",
+    "error_code": null,
+    "transcript_length": 3355,
+    "recorded_at": "2026-09-02T19:10:58.922219+00:00"
+  }
+]

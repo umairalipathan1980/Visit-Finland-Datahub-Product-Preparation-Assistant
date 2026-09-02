@@ -1,0 +1,220 @@
+[
+  {
+    "type": "tool_use",
+    "tool": "load_skill",
+    "recorded_at": "2026-09-02T19:22:53.613027+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_0_bootstrap",
+    "operation": "load_skill",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:22:53.628055+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_0_bootstrap",
+    "operation": "load_skill",
+    "state": "completed",
+    "duration_ms": 15,
+    "recorded_at": "2026-09-02T19:22:53.648244+00:00"
+  },
+  {
+    "type": "skill_loaded",
+    "skill_sha256": "fc7f6665a5d6243d4629f7d20784e0cbce216418cfad6fc616699b28f558c738",
+    "recorded_at": "2026-09-02T19:22:53.663778+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "prepare_sources",
+    "recorded_at": "2026-09-02T19:22:54.965884+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_1",
+    "operation": "validate_sources",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:22:54.979525+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_1",
+    "operation": "validate_sources",
+    "state": "completed",
+    "duration_ms": 359,
+    "recorded_at": "2026-09-02T19:22:55.339346+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_2",
+    "operation": "parse_documents",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:22:55.360375+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_2",
+    "operation": "parse_documents",
+    "state": "completed",
+    "duration_ms": 0,
+    "recorded_at": "2026-09-02T19:22:55.373893+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "fetch_seed_pages",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:22:55.383882+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "fetch_seed_pages",
+    "state": "completed",
+    "duration_ms": 812,
+    "recorded_at": "2026-09-02T19:22:56.184572+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "read_context_page",
+    "recorded_at": "2026-09-02T19:22:57.451301+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:22:57.465712+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "completed",
+    "duration_ms": 16,
+    "recorded_at": "2026-09-02T19:22:57.476717+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "fetch_selected_pages",
+    "detail": "1 selected links",
+    "recorded_at": "2026-09-02T19:23:05.592927+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "fetch_selected_pages",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:23:05.637288+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "fetch_selected_pages",
+    "state": "completed",
+    "duration_ms": 844,
+    "recorded_at": "2026-09-02T19:23:06.472965+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "read_context_page",
+    "recorded_at": "2026-09-02T19:23:08.123844+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:23:08.140377+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_3",
+    "operation": "read_context_page",
+    "state": "completed",
+    "duration_ms": 31,
+    "recorded_at": "2026-09-02T19:23:08.155382+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_4",
+    "operation": "determine_scope",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:24:08.483103+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "record_scope",
+    "recorded_at": "2026-09-02T19:24:08.496619+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_4",
+    "operation": "determine_scope",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:24:08.525680+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_4",
+    "operation": "record_scope",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:24:08.544201+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_4",
+    "operation": "record_scope",
+    "state": "completed",
+    "duration_ms": 16,
+    "recorded_at": "2026-09-02T19:24:08.563370+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "submit_extraction",
+    "detail": "submission 1",
+    "recorded_at": "2026-09-02T19:24:29.077614+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_5",
+    "operation": "submit_extraction",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:24:29.094133+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_5",
+    "operation": "submit_extraction",
+    "state": "completed",
+    "duration_ms": 219,
+    "recorded_at": "2026-09-02T19:24:29.304864+00:00"
+  },
+  {
+    "type": "tool_use",
+    "tool": "finalize_outputs",
+    "recorded_at": "2026-09-02T19:24:51.835774+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_7",
+    "operation": "finalize_outputs",
+    "state": "started",
+    "recorded_at": "2026-09-02T19:24:51.849821+00:00"
+  },
+  {
+    "type": "stage",
+    "stage": "stage_7",
+    "operation": "finalize_outputs",
+    "state": "completed",
+    "duration_ms": 531,
+    "recorded_at": "2026-09-02T19:24:52.380077+00:00"
+  },
+  {
+    "type": "done",
+    "status": "completed",
+    "error_code": null,
+    "transcript_length": 1821,
+    "recorded_at": "2026-09-02T19:24:58.660820+00:00"
+  }
+]

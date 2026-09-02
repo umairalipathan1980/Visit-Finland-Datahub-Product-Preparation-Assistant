@@ -1,0 +1,23 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-shops-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T19:10:51.521748+00:00"
+  },
+  "product_type": "shops",
+  "fields": {
+    "name": {
+      "fi": "Hangon Kauppatori",
+      "en": "Hanko marketplace"
+    },
+    "description": {
+      "fi": "Kauppatori sijaitsee sillan kupeessa Nycanderinkadulla. Tori on auki ymp\u00e4ri vuoden. Torilla myynniss\u00e4 l\u00e4hiruokaa, kalaa ja vihanneksia sek\u00e4 kes\u00e4ll\u00e4 taimia, marjoja ym. Torilla toimii my\u00f6s kev\u00e4\u00e4st\u00e4 my\u00f6h\u00e4iseen syksyyn"
+    },
+    "contact": {
+      "phone": "+358 (0)40 533 4040",
+      "email": null,
+      "website": null
+    }
+  }
+}

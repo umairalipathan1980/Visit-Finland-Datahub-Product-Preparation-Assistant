@@ -1,0 +1,49 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-accommodation-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T19:21:15.756432+00:00"
+  },
+  "product_type": "accommodation",
+  "fields": {
+    "name": {
+      "fi": "Villa Maija"
+    },
+    "description": {
+      "fi": "Villa Maija on yksi Hangon tunnetuimmista pitsihuviloista ja avoinna vuoden jokaisena p\u00e4iv\u00e4n\u00e4. Villa Maija tarjoaa loistavan mahdollisuuden nopeaan irtiottoon arjesta. Y\u00f6pyminen aidossa 1800-luvun huvilassa Hangon paraatipaikalla on ainutlaatuinen el\u00e4mys. Tullijohtaja, hovineuvos Frans von Haartman rakennutti Villa Maijan vuonna 1888."
+    },
+    "address": {
+      "street": "Appelgrenintie 7",
+      "postal_code": "10900",
+      "city": "Hanko"
+    },
+    "coordinates": {
+      "latitude": 59.8236528,
+      "longitude": 22.9718909
+    },
+    "contact": {
+      "email": "hello@hangofarm.fi",
+      "phone": "+358 50 505 2013",
+      "website": "https://hangofarm.fi/loma-asunto-hanko/hotelli-villa-maija-hanko"
+    },
+    "capacity": {
+      "rooms": 4
+    },
+    "booking_url": "https://villamaija.guestybookings.com/",
+    "availability": {
+      "open_year_round": true,
+      "minimum_stay_nights": 1,
+      "notes": "Kes\u00e4kuu-elokuu (June-August) minimum stay rises to 3 nights; shorter stays may be opened in summer if gaps remain between existing bookings."
+    },
+    "amenities": [
+      "private bathroom (shower & wc) in every apartment",
+      "air conditioning",
+      "washing machine",
+      "fully equipped kitchen",
+      "shared terrace",
+      "sauna (in apartment 2 Southside only)",
+      "breakfast available for order (extra charge)"
+    ]
+  }
+}

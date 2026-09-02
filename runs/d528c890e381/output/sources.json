@@ -1,0 +1,20 @@
+{
+  "sources": [
+    {
+      "source_id": "p001",
+      "source_type": "website",
+      "title": "Hanko marketplace - Visithanko",
+      "url": "https://visithanko.fi/en/tuotesivu/hanko-marketplace/",
+      "retrieved_at": "2026-09-02T19:07:15.625178+00:00",
+      "citation_count": 8
+    },
+    {
+      "source_id": "p002",
+      "source_type": "website",
+      "title": "Hangon Kauppatori - Visithanko",
+      "url": "https://visithanko.fi/tuotesivu/hangon-kauppatori/",
+      "retrieved_at": "2026-09-02T19:07:29.561095+00:00",
+      "citation_count": 7
+    }
+  ]
+}

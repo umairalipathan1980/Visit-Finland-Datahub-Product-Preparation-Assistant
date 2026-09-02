@@ -1,0 +1,20 @@
+{
+  "sources": [
+    {
+      "source_id": "p001",
+      "source_type": "website",
+      "title": "Bed & Breakfast Villa Aurora - Visithanko",
+      "url": "https://visithanko.fi/en/tuotesivu/bed-breakfast-villa-aurora-3/",
+      "retrieved_at": "2026-09-02T19:00:39.981536+00:00",
+      "citation_count": 22
+    },
+    {
+      "source_id": "p002",
+      "source_type": "website",
+      "title": "Bed & Breakfast Villa Aurora - Visithanko",
+      "url": "https://visithanko.fi/tuotesivu/bed-breakfast-villa-aurora/",
+      "retrieved_at": "2026-09-02T19:00:57.111721+00:00",
+      "citation_count": 8
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-shops-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T00:00:00Z"
+  },
+  "product_type": "shops",
+  "fields": {
+    "name": {
+      "fi": {
+        "status": "found",
+        "value": "Design PURO Casa & Shop",
+        "evidence": [
+          {
+            "source_id": "p002",
+            "locator": "line 164",
+            "excerpt": "Design PURO Casa & Shop",
+            "quote_verified": true
+          }
+        ]
+      },
+      "en": {
+        "status": "found",
+        "value": "Design PURO Casa & Shop",
+        "evidence": [
+          {
+            "source_id": "p001",
+            "locator": "line 164",
+            "excerpt": "Design PURO Casa & Shop",
+            "quote_verified": true
+          }
+        ]
+      }
+    },
+    "description": {
+      "fi": {
+        "status": "found",
+        "value": "Design PURO Casa & Shop tarjoaa Hangossa, Vuorikatu 15-17:ssa t\u00e4yden palvelun sisustussuunnittelua. Suunnittelemme my\u00f6s kiintokalusteet kuten kaapistot ja keitti\u00f6t. Valikoimistamme l\u00f6ytyy sisustustuotteita, keitti\u00f6tarvikkeita mausteineen sek\u00e4 yksil\u00f6llisi\u00e4 naisten vaatteita.",
+        "evidence": [
+          {
+            "source_id": "p002",
+            "locator": "line 165",
+            "excerpt": "Design PURO Casa & Shop tarjoaa Hangossa, Vuorikatu 15-17:ssa t\u00e4yden palvelun sisustussuunnittelua. Suunnittelemme my\u00f6s kiintokalusteet kuten kaapistot ja keitti\u00f6t. Valikoimistamme l\u00f6ytyy sisustustuotteita, keitti\u00f6tarvikkeita mausteineen sek\u00e4 yksil\u00f6llisi\u00e4 naisten vaatteita.",
+            "quote_verified": true
+          }
+        ]
+      },
+      "en": {
+        "status": "found",
+        "value": "Design PURO Casa & Shop \u2013 interior design shop on Vuorikatu 15-17, Hanko. This lifestyle store is open all year round.",
+        "evidence": [
+          {
+            "source_id": "p001",
+            "locator": "line 165",
+            "excerpt": "Design PURO Casa & Shop \u2013 interior design shop on Vuorikatu 15-17, Hanko. This lifestyle store is open all year round.",
+            "quote_verified": true
+          }
+        ]
+      }
+    },
+    "address": {
+      "status": "found",
+      "value": {
+        "street": "Vuorikatu 15",
+        "postal_code": "10900",
+        "city": "Hanko"
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 172",
+          "excerpt": "Vuorikatu 15, 10900 Hanko",
+          "quote_verified": true
+        }
+      ],
+      "notes": "The page also describes the shop's frontage as spanning 'Vuorikatu 15-17' in the description text, but the structured/mapped address given separately on the page is 'Vuorikatu 15, 10900 Hanko'."
+    },
+    "coordinates": {
+      "status": "missing",
+      "notes": "No latitude/longitude is stated in the page prose. A Google Maps link for 'Vuorikatu 15, 10900 Hanko' is present on the page and its URL happens to encode coordinates, but per policy this is an external, unfetched destination and its URL parameters were not interpreted as an explicit coordinates statement."
+    },
+    "contact": {
+      "status": "found",
+      "value": {
+        "phone": "040 715 1107",
+        "email": "info@purocasa.fi",
+        "website": "https://www.purocasa.fi/"
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 168",
+          "excerpt": "040 715 1107",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 169",
+          "excerpt": "info@purocasa.fi",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 170",
+          "excerpt": "purocasa.fi",
+          "quote_verified": true
+        }
+      ],
+      "notes": "Website value is the literal external URL text (https://www.purocasa.fi/) as it appears as a link on the approved visithanko.fi page; the external site itself was not fetched."
+    },
+    "categories": {
+      "status": "review",
+      "value": [
+        "other_shop"
+      ],
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 173-175",
+          "excerpt": "fashion\nInterior\nShops"
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 173-175",
+          "excerpt": "Muoti\nPutiikit ja puodit\nSisustus"
+        }
+      ],
+      "alternatives": [
+        {
+          "value": [
+            "boutique"
+          ],
+          "evidence": [
+            {
+              "source_id": "p001",
+              "locator": "line 173",
+              "excerpt": "fashion"
+            }
+          ],
+          "reason": "The site tags the shop under 'fashion'/'Muoti' and the description mentions individual women's clothing, which could support a Boutique classification. However, the shop is described primarily as a full-service interior design and lifestyle store (furniture, kitchenware, spices), which does not map cleanly onto any single Shops taxonomy entry, so 'other_shop' was kept as the primary suggestion."
+        }
+      ],
+      "notes": "No taxonomy entry exists for 'Interior' or 'Sisustus'; category assignment is a curator judgment call between Boutique and Other Shop."
+    },
+    "accessibility": {
+      "status": "missing",
+      "notes": "No accessibility statement specific to this shop location was found on the fetched pages. A generic town-wide 'Accessibility' theme page exists in navigation but was not fetched, since it is not tied to this specific business per curation guidance."
+    },
+    "sustainability_label": {
+      "status": "missing",
+      "notes": "No sustainability label or certification is mentioned for this shop on the fetched pages."
+    },
+    "stf_status": {
+      "status": "missing",
+      "notes": "No Sustainable Travel Finland certification statement specific to this shop was found. A generic link to the STF program page exists in the site footer but does not state this shop's certification status."
+    },
+    "opening_hours": {
+      "status": "missing",
+      "notes": "Both the English and Finnish pages contain an 'Opening hours:'/'Aukioloajat:' label immediately followed by contact details, with no day/time schedule captured in the static HTML content. This may be a JavaScript-rendered widget not available to static retrieval."
+    },
+    "languages_spoken": {
+      "status": "missing",
+      "notes": "No languages spoken by shop staff are explicitly stated on the fetched pages."
+    },
+    "images": {
+      "status": "not_in_scope"
+    }
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  }
+}

@@ -3,8 +3,7 @@
 .env.*
 !.env.example
 
-# Runtime data and generated outputs
-runs/
+# Local tool artifacts
 .playwright-mcp/
 .claude/
 

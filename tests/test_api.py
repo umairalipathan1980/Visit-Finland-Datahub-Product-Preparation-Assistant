@@ -15,7 +15,9 @@ async def _fake_completed_run(workspace, package_dir, env_bundle, on_event=None)
     output_dir = workspace / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "result.json").write_text("{}", encoding="utf-8")
-    (output_dir / "canonical-product.json").write_text("{}", encoding="utf-8")
+    (output_dir / "canonical-product.json").write_text(json.dumps({
+        "fields": {"name": {"fi": "Esimerkkihotelli", "en": "Example Hotel"}}
+    }), encoding="utf-8")
     (output_dir / "result.xlsx").write_bytes(b"fake-xlsx")
     (output_dir / "review-report.md").write_text("# report", encoding="utf-8")
     (output_dir / "sources.json").write_text(json.dumps({"sources": []}), encoding="utf-8")
@@ -162,6 +164,7 @@ def test_list_runs_includes_created_run(client):
     assert len(matching) == 1
     assert matching[0]["status"] == "completed"
     assert matching[0]["website_urls"] == ["https://example.fi"]
+    assert matching[0]["product_name"] == "Example Hotel"
     assert matching[0]["approved"] is False
 
 
@@ -194,6 +197,9 @@ def test_approve_persists_edited_fields_as_new_artifact(client):
 
     manifest_resp = client.get(f"/runs/{run_id}/artifacts/run-manifest.json")
     assert manifest_resp.json()["approved"] is True
+
+    summary = next(r for r in client.get("/runs").json()["runs"] if r["run_id"] == run_id)
+    assert summary["product_name"] == "Muokattu nimi"
 
 
 def test_approve_before_run_finishes_is_rejected(client, monkeypatch):

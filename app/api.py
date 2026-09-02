@@ -68,6 +68,26 @@ def _read_json_or_none(path: Path):
         return None
 
 
+def _product_name_from_record(record: dict | None) -> str | None:
+    if not isinstance(record, dict):
+        return None
+    fields = record.get("fields")
+    if not isinstance(fields, dict):
+        return None
+    name = fields.get("name")
+    if isinstance(name, str):
+        return name.strip() or None
+    if not isinstance(name, dict):
+        return None
+    for locale in ("en", "fi"):
+        value = name.get(locale)
+        if isinstance(value, dict):
+            value = value.get("value")
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return None
+
+
 def _now_iso() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
@@ -267,7 +287,13 @@ async def list_runs():
         if not entry_dir.is_dir() or not (entry_dir / "input" / "request.json").is_file():
             continue  # skip stray temp-upload dirs and anything not a real run workspace
         request = _read_json_or_none(entry_dir / "input" / "request.json") or {}
-        manifest = _read_json_or_none(entry_dir / "output" / "run-manifest.json")
+        output_dir = entry_dir / "output"
+        manifest = _read_json_or_none(output_dir / "run-manifest.json")
+        product_name = (
+            _product_name_from_record(_read_json_or_none(output_dir / "approved-product.json"))
+            or _product_name_from_record(_read_json_or_none(output_dir / "canonical-product.json"))
+            or _product_name_from_record(_read_json_or_none(output_dir / "result.json"))
+        )
         run_id = entry_dir.name
         if manifest is not None:
             status = manifest["status"]
@@ -281,6 +307,7 @@ async def list_runs():
         entries.append({
             "run_id": run_id,
             "product_type": request.get("product_type", "accommodation"),
+            "product_name": product_name,
             "website_urls": request.get("website_urls", []),
             "status": status,
             "error_code": error_code,

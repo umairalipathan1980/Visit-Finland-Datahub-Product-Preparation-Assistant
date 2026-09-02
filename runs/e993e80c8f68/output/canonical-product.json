@@ -1,0 +1,24 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-shops-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T19:44:11.664710+00:00"
+  },
+  "product_type": "shops",
+  "fields": {
+    "name": {
+      "fi": "K-Supermarket",
+      "en": "K-Supermarket"
+    },
+    "address": {
+      "street": "Rewellinkatu 2",
+      "postal_code": "10900",
+      "city": "Hanko"
+    },
+    "contact": {
+      "phone": "+358 (0)20 787 1680",
+      "website": "https://www.k-ruoka.fi/kauppa/k-supermarket-hanko-hango"
+    }
+  }
+}

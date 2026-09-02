@@ -1,0 +1,183 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-shops-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T00:00:00Z"
+  },
+  "product_type": "shops",
+  "scope_decision_ref": "resolved:p001,p002",
+  "fields": {
+    "name": {
+      "fi": {
+        "status": "found",
+        "value": "K-Supermarket",
+        "evidence": [
+          {
+            "source_id": "p002",
+            "locator": "line 164",
+            "excerpt": "K-Supermarket",
+            "quote_verified": true
+          }
+        ]
+      },
+      "en": {
+        "status": "found",
+        "value": "K-Supermarket",
+        "evidence": [
+          {
+            "source_id": "p001",
+            "locator": "line 164",
+            "excerpt": "K-Supermarket",
+            "quote_verified": true
+          }
+        ]
+      }
+    },
+    "description": {
+      "fi": {
+        "status": "missing"
+      },
+      "en": {
+        "status": "missing"
+      }
+    },
+    "address": {
+      "status": "found",
+      "value": {
+        "street": "Rewellinkatu 2",
+        "postal_code": "10900",
+        "city": "Hanko"
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 167",
+          "excerpt": "Rewellinkatu 2, 10900 Hanko",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 167",
+          "excerpt": "Rewellinkatu 2, 10900 Hanko",
+          "quote_verified": true
+        }
+      ],
+      "notes": "Country not explicitly stated on either page; Hanko/postal code imply Finland but this is not an explicit source statement."
+    },
+    "coordinates": {
+      "status": "review",
+      "alternatives": [
+        {
+          "value": {
+            "lat": 59.8286075,
+            "lon": 22.9640597
+          },
+          "evidence": [
+            {
+              "source_id": "p001",
+              "locator": "line 280",
+              "excerpt": "https://www.google.com/maps/place/K-Supermarket+Hang%C3%B6/@59.824871,22.9701567,15.5z/data=!4m5!3m4!1s0x0:0x6ba9c7fd3569e4a!8m2!3d59.8286075!4d22.9640597"
+            }
+          ],
+          "reason": "The '!3d..!4d..' segment of the Google Maps link is the place-pin coordinate convention used by Google Maps URLs for the mapped location."
+        },
+        {
+          "value": {
+            "lat": 59.824871,
+            "lon": 22.9701567
+          },
+          "evidence": [
+            {
+              "source_id": "p001",
+              "locator": "line 280",
+              "excerpt": "https://www.google.com/maps/place/K-Supermarket+Hang%C3%B6/@59.824871,22.9701567,15.5z/data=!4m5!3m4!1s0x0:0x6ba9c7fd3569e4a!8m2!3d59.8286075!4d22.9640597"
+            }
+          ],
+          "reason": "The '@lat,lon,zoom' segment of the same URL is the map-view-center convention, which can differ from the exact place pin."
+        }
+      ],
+      "notes": "No coordinates are explicitly labeled as such on the page; two different numeric pairs appear embedded within the same Google Maps link URL (map center vs. place pin). Curator should verify the precise coordinate before use."
+    },
+    "contact": {
+      "status": "found",
+      "value": {
+        "phone": "+358 (0)20 787 1680",
+        "website": "https://www.k-ruoka.fi/kauppa/k-supermarket-hanko-hango"
+      },
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 166",
+          "excerpt": "+358 (0)20 787 1680",
+          "quote_verified": true
+        },
+        {
+          "source_id": "p001",
+          "locator": "line 279",
+          "excerpt": "Opening hours -> https://www.k-ruoka.fi/kauppa/k-supermarket-hanko-hango",
+          "quote_verified": true
+        }
+      ],
+      "alternatives": [
+        {
+          "value": {
+            "phone": "020 787 1680"
+          },
+          "evidence": [
+            {
+              "source_id": "p002",
+              "locator": "line 166",
+              "excerpt": "020 787 1680"
+            }
+          ],
+          "reason": "Same phone number shown in national-format digits on the Finnish-language page, versus international format on the English page."
+        }
+      ],
+      "notes": "Website value is the external k-ruoka.fi chain listing for this specific store, referenced as literal link text on the approved visithanko.fi page; the store has no separate own-domain website found in these sources. No email address for the shop itself was found (only the tourist office's email appears in the footer)."
+    },
+    "categories": {
+      "status": "review",
+      "value": [
+        "supermarket"
+      ],
+      "evidence": [
+        {
+          "source_id": "p001",
+          "locator": "line 169",
+          "excerpt": "Grocery store"
+        },
+        {
+          "source_id": "p002",
+          "locator": "line 169",
+          "excerpt": "Ruokakauppa"
+        }
+      ],
+      "notes": "Mapped from the site's own category tag 'Grocery store' / 'Ruokakauppa' to the closest local Shops taxonomy entry 'Supermarket'. Category status is always review/missing per policy."
+    },
+    "accessibility": {
+      "status": "missing"
+    },
+    "sustainability_label": {
+      "status": "missing"
+    },
+    "stf_status": {
+      "status": "missing"
+    },
+    "opening_hours": {
+      "status": "missing",
+      "notes": "The page shows only a category tag 'Open 365' / 'Auki 365' (implying year-round opening) and a link labeled 'Opening hours' / 'Aukioloajat' pointing to the external k-ruoka.fi store page; no structured weekly schedule or specific times are stated in the stored source text itself."
+    },
+    "languages_spoken": {
+      "status": "missing"
+    },
+    "images": {
+      "status": "not_in_scope"
+    }
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  }
+}

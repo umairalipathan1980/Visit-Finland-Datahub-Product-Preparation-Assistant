@@ -1,0 +1,34 @@
+{
+  "schema_name": "poc-accommodation-schema-v1",
+  "schema_version": "0.1.0-poc",
+  "captured_by": "PoC implementation session, not Visit Finland curator staff",
+  "captured_at": "2026-09-01",
+  "provenance": "This schema and the category file were written for demonstration purposes from general domain knowledge of the Accommodation product type and typical DataHub curator concepts (found/review/missing status, evidence requirement, tri-state accessibility, category limits). They are NOT transcribed from official DataHub curator documentation and have not been confirmed against a machine-readable DataHub source.",
+  "known_gaps": [
+    "Field list is a representative subset (name, description, address, coordinates, contact, categories, accessibility, sustainability_label, stf_status, capacity, pricing, booking_url, availability, opening_hours, amenities, languages_spoken, images) and is not the complete DataHub Accommodation field list.",
+    "Stable category identifiers are invented for this PoC (e.g. 'accommodation.hotel') and are not DataHub's real category identifiers.",
+    "schemas/datahub-categories.json holds ~20 entries, not DataHub's full ~200-entry taxonomy. This is a deliberate PoC-scope decision, not a placeholder pending Phase 0 transcription -- see the plan's 'Category vocabulary' section. Expanding it is out of scope for this release.",
+    "Required-versus-conditionally-required distinctions per DataHub product subtype are not encoded.",
+    "Cardinality constraints beyond the categories array are not encoded.",
+    "Deprecated values are not tracked, because no source listing them was available.",
+    "Import-specific rules that only appear in the DataHub import pipeline (not the curator UI) are unknown."
+  ],
+  "design_decisions": [
+    {
+      "decision": "category_is_classification",
+      "detail": "Categories are never reported as 'found', only 'review' or 'missing'. Assigning a category id to a business is a classification/mapping judgment, not a verbatim extraction, even when the mapping is close to unambiguous. scripts/validate_extraction.py enforces this deterministically (rule_id category_is_classification) and downgrades a 'found' category to 'review' unconditionally, regardless of taxonomy completeness. This is a permanent design decision, not a provisional rule awaiting confirmation."
+    }
+  ],
+  "provisional_rules": [
+    {
+      "rule_id": "max_five_categories",
+      "severity": "warning",
+      "reason": "DataHub guidance to 'choose only five the most relevant categories' reads as a recommendation. Whether the import treats a sixth category as a warning or a hard error is unconfirmed."
+    },
+    {
+      "rule_id": "unknown_category",
+      "severity": "warning",
+      "reason": "schemas/datahub-categories.json is an intentionally small, non-authoritative PoC subset, so an unrecognized category id is at least as likely to be a gap in the subset as an invalid choice. It is a warning rather than an error regardless of taxonomy size; see scripts/validate_extraction.py."
+    }
+  ]
+}

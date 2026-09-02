@@ -1,0 +1,28 @@
+{
+  "taxonomy_version": "poc-subset-0.1",
+  "complete": false,
+  "authoritative": false,
+  "source": "PoC demonstration subset written from general domain knowledge of Finnish accommodation types. This is NOT a transcription of the DataHub curator UI and must not be treated as authoritative. Kept deliberately small for this PoC (see plan Section 7, 'Category vocabulary') -- expanding to DataHub's full taxonomy is out of scope here, not merely pending research; a real submission would need either a machine-readable DataHub source or a full curator-page transcription first.",
+  "categories": [
+    { "id": "accommodation.hotel", "label_fi": "Hotelli", "label_en": "Hotel" },
+    { "id": "accommodation.hostel", "label_fi": "Hostelli", "label_en": "Hostel" },
+    { "id": "accommodation.bed_and_breakfast", "label_fi": "Aamiaismajoitus", "label_en": "Bed & Breakfast" },
+    { "id": "accommodation.guest_house", "label_fi": "Vierastalo", "label_en": "Guest house" },
+    { "id": "accommodation.cottage", "label_fi": "Mökki", "label_en": "Cottage" },
+    { "id": "accommodation.cottage_village", "label_fi": "Mökkikylä", "label_en": "Holiday village" },
+    { "id": "accommodation.apartment", "label_fi": "Huoneisto", "label_en": "Apartment" },
+    { "id": "accommodation.camping", "label_fi": "Leirintäalue", "label_en": "Camping site" },
+    { "id": "accommodation.glamping", "label_fi": "Glamping", "label_en": "Glamping" },
+    { "id": "accommodation.wilderness_hut", "label_fi": "Erämaamaja", "label_en": "Wilderness hut" },
+    { "id": "accommodation.spa_hotel", "label_fi": "Kylpylähotelli", "label_en": "Spa hotel" },
+    { "id": "accommodation.farm_stay", "label_fi": "Maatilamajoitus", "label_en": "Farm stay" },
+    { "id": "accommodation.boat_hotel", "label_fi": "Laivahotelli", "label_en": "Boat hotel" },
+    { "id": "accommodation.igloo", "label_fi": "Iglu", "label_en": "Igloo / glass igloo" },
+    { "id": "accommodation.treehouse", "label_fi": "Puumaja", "label_en": "Tree house" },
+    { "id": "amenity.sauna", "label_fi": "Sauna", "label_en": "Sauna" },
+    { "id": "amenity.restaurant", "label_fi": "Ravintola", "label_en": "Restaurant" },
+    { "id": "amenity.meeting_facilities", "label_fi": "Kokoustilat", "label_en": "Meeting facilities" },
+    { "id": "amenity.pet_friendly", "label_fi": "Lemmikkiystävällinen", "label_en": "Pet friendly" },
+    { "id": "amenity.wellness", "label_fi": "Hyvinvointipalvelut", "label_en": "Wellness services" }
+  ]
+}

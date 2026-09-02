@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "accommodation-extraction.schema.json",
+  "title": "Accommodation extraction result (poc-accommodation-schema-v1)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_metadata", "product_type", "fields"],
+  "$defs": {
+    "status": { "enum": ["found", "review", "missing", "not_in_scope"] },
+    "evidenceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "locator", "excerpt"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "locator": { "type": "string" },
+        "excerpt": { "type": "string", "minLength": 1 },
+        "quote_verified": { "type": "boolean" }
+      }
+    },
+    "alternative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "evidence", "reason"],
+      "properties": {
+        "value": {},
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceEntry" } },
+        "reason": { "type": "string" }
+      }
+    },
+    "fieldEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "value": {},
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceEntry" } },
+        "alternatives": { "type": "array", "items": { "$ref": "#/$defs/alternative" } },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "found" } } },
+          "then": { "required": ["value", "evidence"], "properties": { "evidence": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "not_in_scope" } } },
+          "then": { "not": { "required": ["evidence"] } }
+        }
+      ]
+    },
+    "localizedField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fi", "en"],
+      "properties": {
+        "fi": { "$ref": "#/$defs/fieldEnvelope" },
+        "en": { "$ref": "#/$defs/fieldEnvelope" }
+      }
+    }
+  },
+  "properties": {
+    "run_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_name", "schema_version", "category_taxonomy_version", "generated_at"],
+      "properties": {
+        "schema_name": { "const": "poc-accommodation-schema-v1" },
+        "schema_version": { "type": "string" },
+        "category_taxonomy_version": { "type": "string" },
+        "generated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "product_type": { "const": "accommodation" },
+    "fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name", "description", "address", "coordinates", "contact",
+        "categories", "accessibility", "sustainability_label", "stf_status",
+        "capacity", "pricing", "booking_url", "availability", "opening_hours",
+        "amenities", "languages_spoken", "images"
+      ],
+      "properties": {
+        "name": { "$ref": "#/$defs/localizedField" },
+        "description": { "$ref": "#/$defs/localizedField" },
+        "address": { "$ref": "#/$defs/fieldEnvelope" },
+        "coordinates": { "$ref": "#/$defs/fieldEnvelope" },
+        "contact": { "$ref": "#/$defs/fieldEnvelope" },
+        "categories": { "$ref": "#/$defs/fieldEnvelope" },
+        "accessibility": { "$ref": "#/$defs/fieldEnvelope" },
+        "sustainability_label": { "$ref": "#/$defs/fieldEnvelope" },
+        "stf_status": { "$ref": "#/$defs/fieldEnvelope" },
+        "capacity": { "$ref": "#/$defs/fieldEnvelope" },
+        "pricing": { "$ref": "#/$defs/fieldEnvelope" },
+        "booking_url": { "$ref": "#/$defs/fieldEnvelope" },
+        "availability": { "$ref": "#/$defs/fieldEnvelope" },
+        "opening_hours": { "$ref": "#/$defs/fieldEnvelope" },
+        "amenities": { "$ref": "#/$defs/fieldEnvelope" },
+        "languages_spoken": { "$ref": "#/$defs/fieldEnvelope" },
+        "images": { "$ref": "#/$defs/fieldEnvelope" }
+      }
+    },
+    "scope_decision_ref": { "type": "string" },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "valid": { "type": "boolean" },
+        "errors": { "type": "array", "items": { "type": "object" } },
+        "warnings": { "type": "array", "items": { "type": "object" } }
+      }
+    }
+  }
+}

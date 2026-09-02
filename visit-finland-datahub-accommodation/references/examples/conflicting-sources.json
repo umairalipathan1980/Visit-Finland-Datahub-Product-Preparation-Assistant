@@ -1,0 +1,20 @@
+{
+  "_comment": "Illustrates a field left under review because the Finnish homepage and an uploaded PDF price list disagree. Only the fields relevant to the example are shown in full detail; a real result.json always includes every schema field.",
+  "capacity": {
+    "status": "review",
+    "value": { "rooms": 42 },
+    "evidence": [
+      { "source_id": "p001", "locator": "https://example.fi/", "excerpt": "42 huonetta", "quote_verified": true }
+    ],
+    "alternatives": [
+      {
+        "value": { "rooms": 38 },
+        "evidence": [
+          { "source_id": "d001", "locator": "page 1", "excerpt": "Hotellissa on 38 huonetta", "quote_verified": true }
+        ],
+        "reason": "homepage states 42 rooms, uploaded brochure states 38; sources disagree and neither is dated"
+      }
+    ],
+    "notes": "conflicting room counts between p001 and d001"
+  }
+}

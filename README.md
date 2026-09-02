@@ -19,27 +19,57 @@ This application creates evidence-grounded Visit Finland DataHub records for Acc
 ## Workflow diagram
 
 ```mermaid
-flowchart LR
-    U([User]) --> F[Next.js frontend<br/>localhost:3000]
-    F -->|HTTP and SSE| A[FastAPI backend<br/>127.0.0.1:8010]
-    A --> R[Claude Agent SDK runner]
-    R --> T[Typed workflow tools]
-    T --> E[(Paginated website and document evidence)]
-    E --> V[Schema and rule validation]
-    V --> O[(JSON, Excel, report, and source references)]
-    O --> F
+flowchart TD
+    A([Start preparation]) --> B[Load workflow instructions]
+    B --> C[Validate request]
+    C --> D[Parse uploaded documents]
+    D --> E[Fetch seed pages]
+    E --> F[Read seed evidence pages]
+    F --> G[Select relevant same-site pages]
+    G --> H[Fetch selected pages]
+    H --> I[Read selected evidence pages]
+    I --> J{Recovery fetch required?}
+    J -->|Yes| G
+    J -->|No| K[Determine product scope]
+    K --> L[Record scope decision]
+    L --> M[Construct every schema field]
+    M --> N[Validate extraction]
+    N --> O{Extraction valid?}
+    O -->|No| P[Repair reported defects]
+    P --> Q[Resubmit extraction]
+    Q --> N
+    O -->|Yes| R[Write review report]
+    R --> S[Build canonical JSON]
+    S --> T[Export Excel]
+    T --> U[Build source references]
+    U --> V[Verify and promote outputs]
+    V --> W([Review and approve record])
 ```
 
 ## Workflow steps
 
-- Start workflow
+- Start preparation
+- Load workflow instructions
 - Validate request
-- Parse documents
-- Retrieve pages and paginate evidence
+- Parse uploaded documents
+- Fetch seed pages
+- Read seed evidence pages
+- Select relevant same-site pages
+- Fetch selected pages
+- Read selected evidence pages
+- Perform a recovery fetch, if required
 - Determine product scope
-- Extract fields
+- Record the scope decision
+- Construct every schema field
 - Validate extraction
-- Build outputs
+- Repair reported defects, if required
+- Resubmit repaired extraction
+- Write the review report
+- Build canonical JSON
+- Export Excel
+- Build source references
+- Verify and promote outputs
+- Review and approve the record
 
 ## Request workspace
 

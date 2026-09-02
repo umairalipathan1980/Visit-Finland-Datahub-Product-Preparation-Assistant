@@ -1,4 +1,4 @@
-﻿"""Thin HTTP service exposing the runner over the endpoint contract in plan
+"""Thin HTTP service exposing the runner over the endpoint contract in plan
 Section 15 ("Frontend integration surface").
 
 A separate long-lived Python process from both the CLI entrypoint
@@ -133,7 +133,7 @@ async def lifespan(app: FastAPI):
                 _persist_terminal_lifecycle(workspace, "cancelled", "shutdown_cancelled")
 
 
-app = FastAPI(title="Visit Finland DataHub Accommodation PoC API", lifespan=lifespan)
+app = FastAPI(title="Visit Finland DataHub product preparation API", lifespan=lifespan)
 
 # Dev-only: the Next.js frontend runs on a different origin (localhost:3000)
 # than this API (localhost:8010). Restricted to localhost dev ports, not "*",
@@ -176,17 +176,22 @@ async def _run_limited(workspace: Path, on_event):
 @app.post("/runs", status_code=202)
 async def create_run(
     website_urls: list[str] = Form(...),
+    product_type: str = Form("accommodation"),
     documents: list[UploadFile] = File(default=[]),
 ):
     website_urls = [u for u in website_urls if u.strip()]
     if not website_urls:
         raise HTTPException(status_code=400, detail="at least one website_urls entry is required")
+    if product_type not in {"accommodation", "shops"}:
+        raise HTTPException(status_code=400, detail="product_type must be accommodation or shops")
 
     tmp_dir = Path(tempfile.mkdtemp(prefix="upload-", dir=WORKSPACE_BASE))
     try:
         tmp_doc_paths = await store_uploads(documents, tmp_dir)
 
-        workspace = build_request_workspace(WORKSPACE_BASE, website_urls, tmp_doc_paths)
+        workspace = build_request_workspace(
+            WORKSPACE_BASE, website_urls, tmp_doc_paths, product_type=product_type,
+        )
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
@@ -211,6 +216,8 @@ async def create_run(
 @app.get("/runs/{run_id}")
 async def get_run(run_id: str):
     workspace = _workspace_for(run_id)
+    request = _read_json_or_none(workspace / "input" / "request.json") or {}
+    product_type = request.get("product_type", "accommodation")
     manifest_path = workspace / "output" / "run-manifest.json"
 
     if not manifest_path.is_file():
@@ -222,7 +229,7 @@ async def get_run(run_id: str):
         if task is None:
             # No in-memory task (e.g. the API process restarted) and no
             # manifest yet -- honestly "unknown" rather than a guessed status.
-            return {"run_id": run_id, "status": "interrupted", "error_code": "backend_restarted",
+            return {"run_id": run_id, "product_type": product_type, "status": "interrupted", "error_code": "backend_restarted",
                      "stage_reached": progress.get("stage_reached"), "artifacts": []}
         if task.done() and task.exception() is not None:
             # run_analysis's own try/except should already have written a
@@ -230,7 +237,7 @@ async def get_run(run_id: str):
             # bug in the runner, not a normal terminal outcome. Surface it
             # rather than silently reporting "running" forever.
             raise HTTPException(status_code=500, detail=f"run task raised: {task.exception()!r}")
-        return {"run_id": run_id, "status": _RUN_PHASES.get(run_id, "running"), "error_code": None,
+        return {"run_id": run_id, "product_type": product_type, "status": _RUN_PHASES.get(run_id, "running"), "error_code": None,
                  "stage_reached": progress.get("stage_reached"), "artifacts": []}
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -238,6 +245,7 @@ async def get_run(run_id: str):
     available = sorted(p.name for p in output_dir.iterdir() if p.is_file())
     return {
         "run_id": run_id,
+        "product_type": product_type,
         "status": manifest["status"],
         "error_code": manifest.get("error_code"),
         "stage_reached": manifest.get("stage_reached"),
@@ -272,6 +280,7 @@ async def list_runs():
             approved = False
         entries.append({
             "run_id": run_id,
+            "product_type": request.get("product_type", "accommodation"),
             "website_urls": request.get("website_urls", []),
             "status": status,
             "error_code": error_code,
@@ -355,9 +364,10 @@ async def approve_run(run_id: str, payload: dict = Body(...)):
         raise HTTPException(status_code=400, detail="'fields' must be an object")
 
     approved_at = _now_iso()
+    request = _read_json_or_none(workspace / "input" / "request.json") or {}
     approved_record = {
         "run_metadata": {"approved_at": approved_at, "source": "user-approved"},
-        "product_type": "accommodation",
+        "product_type": request.get("product_type", "accommodation"),
         "fields": fields,
     }
     (workspace / "output" / "approved-product.json").write_text(

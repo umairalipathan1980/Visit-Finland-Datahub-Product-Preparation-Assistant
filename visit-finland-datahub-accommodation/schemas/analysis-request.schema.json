@@ -7,7 +7,7 @@
   "required": ["contract_version", "product_type", "website_urls"],
   "properties": {
     "contract_version": { "const": "v1" },
-    "product_type": { "const": "accommodation" },
+    "product_type": { "enum": ["accommodation", "shops"] },
     "website_urls": {
       "type": "array",
       "items": { "type": "string", "format": "uri", "minLength": 1 },

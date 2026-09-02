@@ -1,8 +1,8 @@
 {
-  "taxonomy_version": "poc-subset-0.1",
+  "taxonomy_version": "poc-subset-0.2",
   "complete": false,
   "authoritative": false,
-  "source": "PoC demonstration subset written from general domain knowledge of Finnish accommodation types. This is NOT a transcription of the DataHub curator UI and must not be treated as authoritative. Kept deliberately small for this PoC (see plan Section 7, 'Category vocabulary') -- expanding to DataHub's full taxonomy is out of scope here, not merely pending research; a real submission would need either a machine-readable DataHub source or a full curator-page transcription first.",
+  "source": "PoC subset. Accommodation entries come from general domain knowledge; Shops labels were transcribed from the user-supplied category screenshot. Stable IDs are local PoC identifiers, not official DataHub identifiers. This taxonomy is not authoritative.",
   "categories": [
     { "id": "accommodation.hotel", "label_fi": "Hotelli", "label_en": "Hotel" },
     { "id": "accommodation.hostel", "label_fi": "Hostelli", "label_en": "Hostel" },
@@ -23,6 +23,15 @@
     { "id": "amenity.restaurant", "label_fi": "Ravintola", "label_en": "Restaurant" },
     { "id": "amenity.meeting_facilities", "label_fi": "Kokoustilat", "label_en": "Meeting facilities" },
     { "id": "amenity.pet_friendly", "label_fi": "Lemmikkiystävällinen", "label_en": "Pet friendly" },
-    { "id": "amenity.wellness", "label_fi": "Hyvinvointipalvelut", "label_en": "Wellness services" }
+    { "id": "amenity.wellness", "label_fi": "Hyvinvointipalvelut", "label_en": "Wellness services" },
+    { "id": "shops.artisan", "label_en": "Artisan" },
+    { "id": "shops.boutique", "label_en": "Boutique" },
+    { "id": "shops.local_products", "label_en": "Local Products" },
+    { "id": "shops.market", "label_en": "Market" },
+    { "id": "shops.outlet", "label_en": "Outlet" },
+    { "id": "shops.shopping_center", "label_en": "Shopping Center" },
+    { "id": "shops.souvenirs", "label_en": "Souvenirs" },
+    { "id": "shops.supermarket", "label_en": "Supermarket" },
+    { "id": "shops.other_shop", "label_en": "Other Shop" }
   ]
 }

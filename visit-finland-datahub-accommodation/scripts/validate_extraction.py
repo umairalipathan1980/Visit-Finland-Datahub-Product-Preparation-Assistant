@@ -6,7 +6,7 @@ value's evidence excerpts must occur literally (after whitespace/quote
 normalization) in the stored source artifact they cite. An excerpt that
 cannot be located is downgraded to 'review' with rule_id quote_not_verified.
 
-Reports success as valid against poc-accommodation-schema-v1, never as
+Reports success against the selected local PoC product schema, never as
 DataHub-valid.
 """
 from __future__ import annotations
@@ -75,9 +75,11 @@ def main() -> int:
     workspace = input_path.parents[1]
     package_dir = Path(__file__).resolve().parent.parent
     categories_path = package_dir / "schemas" / "datahub-categories.json"
-    schema_version_path = package_dir / "schemas" / "schema-version.json"
-
     draft = json.loads(input_path.read_text(encoding="utf-8"))
+    product_type = draft.get("product_type")
+    version_file = "shops-schema-version.json" if product_type == "shops" else "schema-version.json"
+    schema_version_path = package_dir / "schemas" / version_file
+
     schema = json.loads(Path(args.schema).read_text(encoding="utf-8"))
     categories_doc = json.loads(categories_path.read_text(encoding="utf-8"))
     schema_version_doc = json.loads(schema_version_path.read_text(encoding="utf-8"))
@@ -139,12 +141,16 @@ def main() -> int:
             })
 
         if categories_envelope.get("status") == "review":
-            known_ids = {c["id"] for c in categories_doc["categories"]}
+            category_prefix = f"{product_type}."
+            known_ids = {
+                c["id"] for c in categories_doc["categories"]
+                if c["id"].startswith(category_prefix)
+            }
             values = categories_envelope.get("value") or []
             unknown = [v for v in values if v not in known_ids]
             if unknown:
                 warnings.append({"rule_id": "unknown_category", "values": unknown,
-                                   "message": "category id not present in this small, non-authoritative PoC taxonomy subset"})
+                                   "message": f"category id is not valid for the selected {product_type} product taxonomy"})
             if len(values) > MAX_RECOMMENDED_CATEGORIES:
                 warnings.append({"rule_id": "max_five_categories", "count": len(values),
                                    "message": "more than five categories selected; DataHub guidance recommends five, severity is provisional"})
@@ -158,7 +164,7 @@ def main() -> int:
     result["validation"] = {"valid": len(errors) == 0, "errors": errors, "warnings": warnings}
     result["run_metadata"] = {
         **result.get("run_metadata", {}),
-        "schema_name": "poc-accommodation-schema-v1",
+        "schema_name": schema_version_doc["schema_name"],
         "schema_version": schema_version_doc["schema_version"],
         "category_taxonomy_version": categories_doc["taxonomy_version"],
     }
@@ -168,7 +174,7 @@ def main() -> int:
     output_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
 
     print(json.dumps({
-        "status": "valid_against_poc-accommodation-schema-v1" if not errors else "invalid",
+        "status": f"valid_against_{schema_version_doc['schema_name']}" if not errors else "invalid",
         "error_count": len(errors),
         "warning_count": len(warnings),
     }))

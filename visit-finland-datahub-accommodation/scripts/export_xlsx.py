@@ -14,12 +14,12 @@ from pathlib import Path
 
 from openpyxl import Workbook
 
-SHEET_NAME = "Accommodation"
+SHEET_NAMES = {"accommodation": "Accommodation", "shops": "Shops"}
 
 # Fixed column order. Localized fields expand to two columns; status columns
 # ride alongside their value column so a curator can see why something is
 # blank without opening result.json.
-COLUMNS = [
+COMMON_COLUMNS = [
     ("name.fi", "name", "fi"), ("name.en", "name", "en"),
     ("description.fi", "description", "fi"), ("description.en", "description", "en"),
     ("address", "address", None),
@@ -29,13 +29,16 @@ COLUMNS = [
     ("accessibility", "accessibility", None),
     ("sustainability_label", "sustainability_label", None),
     ("stf_status", "stf_status", None),
+    ("opening_hours", "opening_hours", None),
+    ("languages_spoken", "languages_spoken", None),
+]
+
+ACCOMMODATION_ONLY_COLUMNS = [
     ("capacity", "capacity", None),
     ("pricing", "pricing", None),
     ("booking_url", "booking_url", None),
     ("availability", "availability", None),
-    ("opening_hours", "opening_hours", None),
     ("amenities", "amenities", None),
-    ("languages_spoken", "languages_spoken", None),
 ]
 
 FORMULA_PREFIXES = ("=", "+", "-", "@")
@@ -78,17 +81,23 @@ def main() -> int:
 
     result = json.loads(Path(args.input).read_text(encoding="utf-8"))
     fields = result["fields"]
+    product_type = result.get("product_type", "accommodation")
+    if product_type not in SHEET_NAMES:
+        raise ValueError(f"unsupported product_type: {product_type}")
+    columns = COMMON_COLUMNS + (
+        ACCOMMODATION_ONLY_COLUMNS if product_type == "accommodation" else []
+    )
 
     wb = Workbook()
     ws = wb.active
-    ws.title = SHEET_NAME
-    ws.append([col_name for col_name, _, _ in COLUMNS])
-    ws.append([serialize_value(field_value(fields, field_name, locale)) for _, field_name, locale in COLUMNS])
+    ws.title = SHEET_NAMES[product_type]
+    ws.append([col_name for col_name, _, _ in columns])
+    ws.append([serialize_value(field_value(fields, field_name, locale)) for _, field_name, locale in columns])
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     wb.save(output_path)
-    print(json.dumps({"status": "ok", "columns": len(COLUMNS)}))
+    print(json.dumps({"status": "ok", "columns": len(columns), "product_type": product_type}))
     return 0
 
 

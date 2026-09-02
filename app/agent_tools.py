@@ -1,4 +1,4 @@
-﻿"""Coarse, typed tools for the optimized continuous agent workflow.
+"""Coarse, typed tools for the optimized continuous agent workflow.
 
 Claude keeps semantic control.  This module owns paths, subprocess argv,
 network boundaries, artifact writes, validation, and compact evidence
@@ -39,11 +39,20 @@ MAX_EVIDENCE_CHUNK_CHARS = 44_000
 MAX_TOTAL_CONTEXT_CHARS = 2_400_000
 MAX_CANDIDATE_URL_CHARS = 2_000
 MAX_CANDIDATE_TEXT_CHARS = 1_000
-CANDIDATE_KEYWORDS = (
-    "accommodation", "hotel", "room", "contact", "location", "booking", "terms",
-    "accessibility", "sustainability", "majoitus", "hotelli", "huone", "yhteys",
-    "sijainti", "varaus", "ehdot", "esteettomyys", "vastuullisuus",
-)
+CANDIDATE_KEYWORDS = {
+    "accommodation": (
+        "accommodation", "hotel", "room", "contact", "location", "booking", "terms",
+        "accessibility", "sustainability", "majoitus", "hotelli", "huone", "yhteys",
+        "sijainti", "varaus", "ehdot", "esteettomyys", "vastuullisuus",
+    ),
+    "shops": (
+        "shop", "store", "artisan", "boutique", "local product", "market", "outlet",
+        "shopping center", "souvenir", "supermarket", "contact", "location",
+        "opening hours", "accessibility", "sustainability", "kauppa", "myymala",
+        "putiikki", "kasityo", "paikallistuote", "markkinat", "ostoskeskus",
+        "matkamuisto", "ruokakauppa", "yhteys", "sijainti", "aukiolo",
+    ),
+}
 
 TOOL_NAMES = [
     "load_skill",
@@ -92,7 +101,7 @@ class ResolvedScopeDecision(_StrictToolInput):
 
 class AmbiguousScopeDecision(_StrictToolInput):
     status: Literal["scope_ambiguous"]
-    error_code: Literal["multiple_accommodation_products", "product_boundary_unclear"]
+    error_code: Literal["multiple_products", "multiple_accommodation_products", "multiple_shops_products", "product_boundary_unclear"]
     reason: str = Field(min_length=1, max_length=2000)
     product: ScopeProduct | None = None
     excluded: list[Any]
@@ -120,6 +129,7 @@ class OptimizedToolState:
     workspace: Path
     package_dir: Path
     telemetry: RunTelemetry
+    product_type: Literal["accommodation", "shops"] = "accommodation"
     skill_loaded: bool = False
     prepared: bool = False
     scope_status: str | None = None
@@ -452,12 +462,13 @@ def _persist_context_delivery(state: OptimizedToolState) -> None:
     })
 
 
-def _candidate_score(entry: dict[str, Any]) -> int:
+def _candidate_score(entry: dict[str, Any], product_type: str = "accommodation") -> int:
     searchable = " ".join(str(entry.get(name, "")) for name in ("url", "anchor_text", "surrounding_text")).lower()
-    return sum(1 for keyword in CANDIDATE_KEYWORDS if keyword in searchable)
+    keywords = CANDIDATE_KEYWORDS.get(product_type, CANDIDATE_KEYWORDS["accommodation"])
+    return sum(1 for keyword in keywords if keyword in searchable)
 
 
-def _candidate_entries(workspace: Path) -> list[dict[str, Any]]:
+def _candidate_entries(workspace: Path, product_type: str = "accommodation") -> list[dict[str, Any]]:
     existing = _read_json(workspace / "work" / "link-candidates.json", {"links": []})
     by_url = {entry["url"]: entry for entry in existing.get("links", []) if entry.get("url")}
     next_index = max((int(e["id"][1:]) for e in by_url.values() if str(e.get("id", ""))[1:].isdigit()), default=0) + 1
@@ -486,7 +497,7 @@ def _candidate_entries(workspace: Path) -> list[dict[str, Any]]:
             next_index += 1
 
     entries = sorted(by_url.values(), key=lambda e: e["id"])
-    visible = sorted(entries, key=lambda e: (-_candidate_score(e), e["id"]))
+    visible = sorted(entries, key=lambda e: (-_candidate_score(e, product_type), e["id"]))
     _write_json_atomic(workspace / "work" / "link-candidates.json", {
         "links": entries,
         "visible_count": len(visible),
@@ -517,7 +528,13 @@ def build_optimized_tool_server(
     telemetry: RunTelemetry,
 ):
     """Return (SDK MCP server, mutable run state, fully-qualified tool names)."""
-    state = OptimizedToolState(workspace.resolve(), package_dir.resolve(), telemetry)
+    request = _read_json(workspace / "input" / "request.json", {})
+    product_type = request.get("product_type", "accommodation")
+    if product_type not in {"accommodation", "shops"}:
+        raise ValueError(f"unsupported product_type: {product_type}")
+    state = OptimizedToolState(
+        workspace.resolve(), package_dir.resolve(), telemetry, product_type=product_type,
+    )
     state.bundle_limitations = []
 
     @tool("load_skill", "Load the complete Visit Finland SKILL.md and versioned extraction policy. Call this first.",
@@ -532,14 +549,24 @@ def build_optimized_tool_server(
             skill_path = state.package_dir / "SKILL.md"
             skill_text = skill_path.read_text(encoding="utf-8")
             references = {}
+            guidance_name = f"{state.product_type}-guidance.md"
+            semantics_name = (
+                "shops-field-semantics.md" if state.product_type == "shops"
+                else "field-semantics.md"
+            )
             for name in [
-                "general-curation.md", "accommodation-guidance.md", "field-semantics.md",
+                "general-curation.md", guidance_name, semantics_name,
                 "source-and-evidence-policy.md",
             ]:
                 references[name] = (state.package_dir / "references" / name).read_text(encoding="utf-8")
+            extraction_schema_name = f"{state.product_type}-extraction.schema.json"
+            version_name = (
+                "shops-schema-version.json" if state.product_type == "shops"
+                else "schema-version.json"
+            )
             schemas = {
-                "extraction": _read_json(state.package_dir / "schemas" / "accommodation-extraction.schema.json"),
-                "schema_version": _read_json(state.package_dir / "schemas" / "schema-version.json"),
+                "extraction": _read_json(state.package_dir / "schemas" / extraction_schema_name),
+                "schema_version": _read_json(state.package_dir / "schemas" / version_name),
                 "category_taxonomy": _read_json(state.package_dir / "schemas" / "datahub-categories.json"),
             }
             state.skill_loaded = True
@@ -548,7 +575,7 @@ def build_optimized_tool_server(
             telemetry.finish_operation(op, skill_sha256=digest)
             telemetry.emit({"type": "skill_loaded", "skill_sha256": digest})
             return _json_result({
-                "status": "ok", "workflow_mode": "coarse_tools", "skill_sha256": digest,
+                "status": "ok", "workflow_mode": "coarse_tools", "product_type": state.product_type, "skill_sha256": digest,
                 "skill": skill_text, "references": references, "schemas": schemas,
             })
         except Exception as exc:
@@ -565,7 +592,7 @@ def build_optimized_tool_server(
         if not state.skill_loaded:
             return _json_result({"status": "error", "error_code": "skill_not_loaded"}, is_error=True)
         if state.prepared:
-            candidates = _candidate_entries(state.workspace)
+            candidates = _candidate_entries(state.workspace, state.product_type)
             return _json_result({
                 "status": "ok",
                 "idempotent": True,
@@ -635,7 +662,7 @@ def build_optimized_tool_server(
             record for record in (_page_records(state.workspace) + _document_records(state.workspace))
             if str(record.get("text") or "")
         ]
-        candidates = _candidate_entries(state.workspace)
+        candidates = _candidate_entries(state.workspace, state.product_type)
         summary = _source_summary(state.workspace)
         if not records:
             state.forced_status = "no_usable_sources"
@@ -804,7 +831,7 @@ def build_optimized_tool_server(
         after_records = _page_records(state.workspace)
         new_ids = {p["source_id"] for p in after_records} - before_ids
         records = [p for p in after_records if p["source_id"] in new_ids]
-        next_candidates = _candidate_entries(state.workspace)
+        next_candidates = _candidate_entries(state.workspace, state.product_type)
         unseen_candidates = [c for c in next_candidates if c["id"] not in state.selected_link_ids]
         try:
             first_cursor, context_page_count, evidence_chars, queued_candidates = _queue_context_pages(
@@ -934,7 +961,7 @@ def build_optimized_tool_server(
         validation = await _run_script(
             state, "validate_extraction.py",
             "--input", str(draft_path),
-            "--schema", str(state.package_dir / "schemas" / "accommodation-extraction.schema.json"),
+            "--schema", str(state.package_dir / "schemas" / f"{state.product_type}-extraction.schema.json"),
             "--output", str(result_path),
         )
         state.extraction_submissions += 1
@@ -1008,10 +1035,10 @@ def build_optimized_tool_server(
             if not isinstance(canonical_document, dict) or not isinstance(canonical_document.get("fields"), dict):
                 raise ValueError("canonical-product.json has no fields object")
             extraction_schema = _read_json(
-                state.package_dir / "schemas" / "accommodation-extraction.schema.json",
+                state.package_dir / "schemas" / f"{state.product_type}-extraction.schema.json",
             )
             canonical_schema = _read_json(
-                state.package_dir / "schemas" / "canonical-accommodation.schema.json",
+                state.package_dir / "schemas" / f"canonical-{state.product_type}.schema.json",
             )
             jsonschema.Draft202012Validator(
                 extraction_schema, format_checker=jsonschema.FormatChecker(),

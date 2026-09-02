@@ -8,7 +8,8 @@ from pathlib import Path
 
 
 def build_request_workspace(base_dir: Path, website_urls: list[str], document_paths: list[Path],
-                              languages: list[str] | None = None) -> Path:
+                              languages: list[str] | None = None,
+                              product_type: str = "accommodation") -> Path:
     run_id = uuid.uuid4().hex[:12]
     workspace = base_dir / run_id
     (workspace / "input" / "documents").mkdir(parents=True, exist_ok=True)
@@ -25,7 +26,7 @@ def build_request_workspace(base_dir: Path, website_urls: list[str], document_pa
 
     request = {
         "contract_version": "v1",
-        "product_type": "accommodation",
+        "product_type": product_type,
         "website_urls": website_urls,
         "document_files": document_files,
         "languages": languages or ["fi", "en"],

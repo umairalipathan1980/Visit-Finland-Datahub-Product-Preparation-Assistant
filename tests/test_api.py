@@ -224,3 +224,37 @@ def test_events_stream_replays_history_then_done(client):
 def test_events_stream_unknown_run_id_returns_404(client):
     resp = client.get("/runs/does-not-exist/events")
     assert resp.status_code == 404
+
+
+def test_create_shops_run_persists_and_returns_product_type(client):
+    resp = client.post(
+        "/runs",
+        data={"website_urls": ["https://example.fi/shop"], "product_type": "shops"},
+    )
+    assert resp.status_code == 202
+    run_id = resp.json()["run_id"]
+
+    request = json.loads(
+        (api_module.WORKSPACE_BASE / run_id / "input" / "request.json").read_text(encoding="utf-8")
+    )
+    assert request["product_type"] == "shops"
+
+    time.sleep(0.4)
+    detail = client.get(f"/runs/{run_id}").json()
+    assert detail["product_type"] == "shops"
+
+    summary = next(r for r in client.get("/runs").json()["runs"] if r["run_id"] == run_id)
+    assert summary["product_type"] == "shops"
+
+    approve_resp = client.post(f"/runs/{run_id}/approve", json={"fields": {}})
+    assert approve_resp.status_code == 200
+    approved = client.get(f"/runs/{run_id}/artifacts/approved-product.json").json()
+    assert approved["product_type"] == "shops"
+
+
+def test_create_run_rejects_unknown_product_type(client):
+    resp = client.post(
+        "/runs",
+        data={"website_urls": ["https://example.fi"], "product_type": "restaurants"},
+    )
+    assert resp.status_code == 400

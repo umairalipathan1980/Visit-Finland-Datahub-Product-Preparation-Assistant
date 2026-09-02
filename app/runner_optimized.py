@@ -1,4 +1,4 @@
-﻿"""One-session Claude Agent SDK runner using only coarse typed tools."""
+"""One-session Claude Agent SDK runner using only coarse typed tools."""
 from __future__ import annotations
 
 import asyncio
@@ -93,7 +93,9 @@ async def run_optimized_analysis(
         max_turns=OPTIMIZED_TURN_CAP,
         include_partial_messages=True,
     )
-    prompt = f"""Run the Visit Finland Accommodation preparation workflow for run {workspace.name}.
+    product_type = getattr(state, "product_type", "accommodation")
+    product_label = "Accommodation" if product_type == "accommodation" else "Shops"
+    prompt = f"""Run the Visit Finland {product_label} preparation workflow for run {workspace.name}.
 
 You have one continuous session and only seven task-specific tools. You have no shell or filesystem tools.
 Call load_skill first and follow the returned SKILL.md completely, specifically its Optimized coarse-tool workflow.

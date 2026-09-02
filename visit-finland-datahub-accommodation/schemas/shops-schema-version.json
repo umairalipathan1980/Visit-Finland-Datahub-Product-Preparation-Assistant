@@ -1,0 +1,13 @@
+{
+  "schema_name": "poc-shops-schema-v1",
+  "schema_version": "0.1.0-poc",
+  "captured_by": "PoC implementation session, not Visit Finland curator staff",
+  "captured_at": "2026-09-02",
+  "provenance": "The Shops schema uses the shared application fields confirmed for this implementation. The category labels were supplied from the Shops curator screenshot; the stable identifiers are local PoC identifiers and are not official DataHub identifiers.",
+  "known_gaps": [
+    "The schema contains only fields shared with the Accommodation preparation flow.",
+    "Stable Shops category identifiers are local PoC identifiers and are not DataHub's official identifiers.",
+    "Required-versus-conditionally-required distinctions are not encoded.",
+    "Images remain outside the extraction scope for this release."
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "canonical-shops.schema.json",
+  "title": "Canonical Shops record (poc-shops-schema-v1, provisional)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_metadata", "product_type", "fields"],
+  "properties": {
+    "run_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_name", "schema_version", "category_taxonomy_version", "generated_at"],
+      "properties": {
+        "schema_name": { "const": "poc-shops-schema-v1" },
+        "schema_version": { "type": "string" },
+        "category_taxonomy_version": { "type": "string" },
+        "generated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "product_type": { "const": "shops" },
+    "fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "fi": { "type": "string" }, "en": { "type": "string" } }
+        },
+        "description": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "fi": { "type": "string" }, "en": { "type": "string" } }
+        },
+        "address": { "type": "object" },
+        "coordinates": { "type": "object" },
+        "contact": { "type": "object" },
+        "categories": { "type": "array", "items": { "type": "string" } },
+        "accessibility": { "enum": ["accessible", "non_accessible", "not_specified"] },
+        "sustainability_label": {},
+        "stf_status": { "enum": ["certified", "not_certified", "not_specified"] },
+        "opening_hours": { "type": "string" },
+        "languages_spoken": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

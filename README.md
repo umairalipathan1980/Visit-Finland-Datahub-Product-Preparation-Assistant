@@ -1,8 +1,7 @@
-# Visit Finland DataHub Accommodation Assistant
+# Visit Finland DataHub Product Preparation Assistant
 
-This application prepares an evidence-grounded Visit Finland DataHub
-Accommodation record from one or more company website URLs and optional
-PDF/DOCX documents. It produces reviewable JSON, Excel, and Markdown artifacts;
+This application prepares an evidence-grounded Visit Finland DataHub Accommodation or
+Shops record from one or more company website URLs and optional PDF/DOCX documents. It produces reviewable JSON, Excel, and Markdown artifacts;
 it does not submit data to Visit Finland DataHub.
 
 The application has one workflow: a continuous Claude Agent SDK session with
@@ -217,7 +216,8 @@ explicit and are not part of the default test suite.
   fetched or cited.
 - Artifact downloads use a fixed allowlist.
 - Credentials are never put in prompts or run artifacts.
-- Accommodation is the only supported product type.
+- Supported product types are Accommodation and Shops. Shops uses a dedicated schema
+  containing the fields shared with Accommodation and its own category taxonomy.
 - PDF OCR is detected but not performed.
 - No general web search, browser rendering, duplicate search, or automatic
   DataHub submission is performed.

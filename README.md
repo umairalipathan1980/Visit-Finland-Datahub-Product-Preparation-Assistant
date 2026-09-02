@@ -6,7 +6,7 @@ This application creates evidence-grounded Visit Finland DataHub records for tou
 
 Tourism-related organizations need to upload this information to the Visit Finland DataHub, now operated by Business Finland, so their products are discoverable. Preparing it in the required format is time-consuming; this tool streamlines that work.
 
-The user selects a product type, such as Accommodation or Shops, and supplies one or more URLs with optional PDF or DOCX files. The tool analyzes and combines the source evidence, determines the product scope (such as the specific accommodation or shop represented) using predefined scope schemas, performs structured extraction against the selected product schema, validates the record, and prepares outputs for entry into the DataHub.
+The user selects a product type, such as Accommodation or Shops, and supplies one or more URLs with optional PDF or DOCX files. The tool analyzes and combines the source evidence, determines the product scope (reviews all sources and identifies product, supporting sources, excludes unrelated links and other products, and resolves whether one specific product can be identified or multiple products exist), identifies its category (such as the specific accommodation or shop represented) using predefined scope schemas, performs structured extraction against the selected product schema, validates the record, and prepares outputs for entry into the DataHub.
 
 ## Architecture
 

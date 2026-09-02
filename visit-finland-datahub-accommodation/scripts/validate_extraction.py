@@ -24,6 +24,28 @@ QUOTE_CHARS = {
     "‘": "'", "’": "'", "“": '"', "”": '"',
 }
 MAX_RECOMMENDED_CATEGORIES = 5
+LEGACY_CATEGORY_NAMESPACES = {"accommodation", "amenity", "shops"}
+
+
+def normalize_category_id(value):
+    if not isinstance(value, str):
+        return value
+    namespace, separator, category_id = value.partition(".")
+    if separator and namespace in LEGACY_CATEGORY_NAMESPACES and category_id:
+        return category_id
+    return value
+
+
+def normalize_category_values(envelope: dict) -> None:
+    values = envelope.get("value")
+    if not isinstance(values, list):
+        return
+    normalized = []
+    for value in values:
+        plain_value = normalize_category_id(value)
+        if plain_value not in normalized:
+            normalized.append(plain_value)
+    envelope["value"] = normalized
 
 
 def normalize_for_quote_check(text: str) -> str:
@@ -132,6 +154,8 @@ def main() -> int:
         # Category assignment is classification, not extraction (plan Section 7):
         # a category is never accepted as 'found', regardless of taxonomy match.
         categories_envelope = fields.get("categories", {})
+        normalize_category_values(categories_envelope)
+        normalize_category_values(fields.get("amenities", {}))
         if categories_envelope.get("status") == "found":
             categories_envelope["status"] = "review"
             warnings.append({
@@ -141,10 +165,10 @@ def main() -> int:
             })
 
         if categories_envelope.get("status") == "review":
-            category_prefix = f"{product_type}."
             known_ids = {
-                c["id"] for c in categories_doc["categories"]
-                if c["id"].startswith(category_prefix)
+                category["id"]
+                for category in categories_doc["categories"]
+                if category.get("group") == product_type
             }
             values = categories_envelope.get("value") or []
             unknown = [v for v in values if v not in known_ids]

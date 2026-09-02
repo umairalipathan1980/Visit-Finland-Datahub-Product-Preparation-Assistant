@@ -94,6 +94,7 @@ def test_found_category_is_always_downgraded_to_review_even_when_valid(workspace
     run_validate_extraction(workspace)
     output = json.loads((workspace / "work" / "staging-output" / "result.json").read_text(encoding="utf-8"))
     assert output["fields"]["categories"]["status"] == "review"
+    assert output["fields"]["categories"]["value"] == ["hotel"]
     assert any(w["rule_id"] == "category_is_classification" for w in output["validation"]["warnings"])
 
 
@@ -107,6 +108,7 @@ def test_unknown_category_is_a_warning_not_an_error(workspace):
     output = json.loads((workspace / "work" / "staging-output" / "result.json").read_text(encoding="utf-8"))
     assert output["fields"]["categories"]["status"] == "review"
     assert any(w["rule_id"] == "unknown_category" for w in output["validation"]["warnings"])
+    assert output["fields"]["categories"]["value"] == ["not_a_real_category"]
     assert not any(e["rule_id"] == "unknown_category" for e in output["validation"]["errors"])
     assert result.returncode == 0
 
@@ -131,6 +133,7 @@ def test_more_than_five_categories_warns(workspace):
     run_validate_extraction(workspace)
     output = json.loads((workspace / "work" / "staging-output" / "result.json").read_text(encoding="utf-8"))
     assert any(w["rule_id"] == "max_five_categories" for w in output["validation"]["warnings"])
+    assert all("." not in value for value in output["fields"]["categories"]["value"])
 
 
 def test_accessibility_found_without_evidence_is_a_schema_violation(workspace):

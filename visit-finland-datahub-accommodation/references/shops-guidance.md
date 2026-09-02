@@ -23,14 +23,14 @@ capacity, pricing, booking, availability, or amenity fields to a Shops result.
 
 ## Categories
 
-Choose only from the `shops.*` entries in
+Choose only from entries in the `shops` group in
 `schemas/datahub-categories.json`: Artisan, Boutique, Local Products, Market,
 Outlet, Shopping Center, Souvenirs, Supermarket, and Other Shop.
 
 Category assignment is classification. Always use status `review` or
 `missing`, never `found`, and attach evidence supporting every suggestion.
 Do not substitute an Accommodation or amenity category. Use
-`shops.other_shop` only when the evidence clearly describes a shop but does
+`other_shop` only when the evidence clearly describes a shop but does
 not support one of the more specific Shops categories.
 
 ## Evidence cautions

@@ -2,7 +2,7 @@
   "run_metadata": {
     "schema_name": "poc-accommodation-schema-v1",
     "schema_version": "0.1.0-poc",
-    "category_taxonomy_version": "poc-subset-0.1",
+    "category_taxonomy_version": "poc-subset-0.3",
     "generated_at": "2026-01-01T00:00:00Z"
   },
   "product_type": "accommodation",
@@ -24,7 +24,7 @@
     "coordinates": { "status": "missing" },
     "contact": { "status": "found", "value": { "email": "info@example.fi", "phone": "+358401234567", "website": "https://example.fi" },
       "evidence": [ { "source_id": "p001", "locator": "https://example.fi/yhteystiedot", "excerpt": "info@example.fi", "quote_verified": true } ] },
-    "categories": { "status": "review", "value": ["accommodation.hotel"],
+    "categories": { "status": "review", "value": ["hotel"],
       "evidence": [ { "source_id": "p001", "locator": "https://example.fi/", "excerpt": "Esimerkkihotelli on kaupungin keskustassa sijaitseva hotelli", "quote_verified": true } ],
       "notes": "explicit self-description as a hotel supports this category, but assigning the id is still a classification, not a quote -- always review, never found" },
     "accessibility": { "status": "missing" },

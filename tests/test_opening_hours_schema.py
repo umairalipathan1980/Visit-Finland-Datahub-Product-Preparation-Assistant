@@ -62,7 +62,7 @@ def extraction_document(product_type, opening_hours):
         "run_metadata": {
             "schema_name": schema_name,
             "schema_version": "0.2.0-poc",
-            "category_taxonomy_version": "poc-subset-0.2",
+            "category_taxonomy_version": "poc-subset-0.3",
             "generated_at": "2026-09-02T00:00:00Z",
         },
         "product_type": product_type,
@@ -107,7 +107,7 @@ def test_canonical_schema_accepts_same_structured_opening_hours(product_type):
         "run_metadata": {
             "schema_name": f"poc-{product_type}-schema-v1",
             "schema_version": "0.2.0-poc",
-            "category_taxonomy_version": "poc-subset-0.2",
+            "category_taxonomy_version": "poc-subset-0.3",
             "generated_at": "2026-09-02T00:00:00Z",
         },
         "product_type": product_type,

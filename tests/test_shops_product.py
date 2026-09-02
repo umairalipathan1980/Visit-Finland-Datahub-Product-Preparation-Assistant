@@ -20,12 +20,12 @@ def envelope(status, value=None, evidence=None):
     return result
 
 
-def shops_draft(category_id="shops.artisan"):
+def shops_draft(category_id="artisan"):
     return {
         "run_metadata": {
             "schema_name": "poc-shops-schema-v1",
             "schema_version": "0.2.0-poc",
-            "category_taxonomy_version": "poc-subset-0.2",
+            "category_taxonomy_version": "poc-subset-0.3",
             "generated_at": "2026-09-02T00:00:00Z",
         },
         "product_type": "shops",
@@ -65,6 +65,15 @@ def run_shops_validator(workspace, draft):
         text=True,
     )
     return result, json.loads(output_path.read_text(encoding="utf-8"))
+
+
+def test_taxonomy_uses_plain_ids_with_explicit_groups():
+    taxonomy = json.loads((SCHEMAS_DIR / "datahub-categories.json").read_text(encoding="utf-8"))
+    assert taxonomy["taxonomy_version"] == "poc-subset-0.3"
+    assert all("." not in category["id"] for category in taxonomy["categories"])
+    assert {category["group"] for category in taxonomy["categories"]} == {
+        "accommodation", "amenity", "shops",
+    }
 
 
 def test_request_contract_accepts_shops_and_rejects_other_product_types():
@@ -108,15 +117,22 @@ def test_shops_validator_accepts_shop_category_and_metadata(workspace):
     assert result.returncode == 0, result.stderr
     assert output["product_type"] == "shops"
     assert output["run_metadata"]["schema_name"] == "poc-shops-schema-v1"
-    assert output["run_metadata"]["category_taxonomy_version"] == "poc-subset-0.2"
+    assert output["run_metadata"]["category_taxonomy_version"] == "poc-subset-0.3"
+    assert not any(w["rule_id"] == "unknown_category" for w in output["validation"]["warnings"])
+
+
+def test_shops_validator_normalizes_legacy_prefixed_category(workspace):
+    result, output = run_shops_validator(workspace, shops_draft("shops.shopping_center"))
+    assert result.returncode == 0
+    assert output["fields"]["categories"]["value"] == ["shopping_center"]
     assert not any(w["rule_id"] == "unknown_category" for w in output["validation"]["warnings"])
 
 
 def test_shops_validator_flags_cross_product_category(workspace):
-    result, output = run_shops_validator(workspace, shops_draft("accommodation.hotel"))
+    result, output = run_shops_validator(workspace, shops_draft("hotel"))
     assert result.returncode == 0
     warning = next(w for w in output["validation"]["warnings"] if w["rule_id"] == "unknown_category")
-    assert warning["values"] == ["accommodation.hotel"]
+    assert warning["values"] == ["hotel"]
 
 
 def test_shops_export_uses_shops_sheet_and_shared_columns_only(workspace):

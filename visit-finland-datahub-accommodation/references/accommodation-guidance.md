@@ -21,7 +21,7 @@ do not let its presence block the run.
   match and note the gap in the review report rather than inventing a new
   category id. **Always write category status as `review`, never `found`,**
   even when the match is obvious (a page that literally says "hotelli" still
-  only supports `review` for `accommodation.hotel`) -- assigning a category
+  only supports `review` for `hotel`) -- assigning a category
   id is a classification judgment, not a quoted fact, and a curator confirms
   it either way. `missing` is correct and unremarkable when nothing on the
   site supports any category; do not force a guess to avoid an empty field.

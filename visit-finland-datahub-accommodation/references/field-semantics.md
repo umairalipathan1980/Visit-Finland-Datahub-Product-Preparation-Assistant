@@ -17,7 +17,7 @@ Pinned here rather than left to judgment, per `schemas/accommodation-extraction.
 | `booking_url` | string (uri) | must resolve to a booking/reservation destination |
 | `availability` | object: `open_year_round` (bool), `minimum_stay_nights` (integer), `notes` (string) | -- |
 | `opening_hours` | structured object | use the exact shared format in `references/opening-hours.md` |
-| `amenities` | array of strings | free text, prefer terms from `datahub-categories.json`'s `amenity.*` entries where they match |
+| `amenities` | array of strings | free text, prefer terms from `datahub-categories.json` entries in the `amenity` group where they match |
 | `languages_spoken` | array of ISO-639-1-ish strings (`fi`, `en`, `sv`, ...) | -- |
 | `images` | always `not_in_scope` | -- |
 

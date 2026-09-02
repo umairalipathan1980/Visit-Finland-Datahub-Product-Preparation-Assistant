@@ -14,8 +14,8 @@ envelope in `schemas/shops-extraction.schema.json`.
   citable source.
 - `contact`: email, phone, and website belonging to the selected shop and
   location.
-- `categories`: a list of `shops.*` identifiers from the supplied local
-  taxonomy. Category status is always `review` or `missing`.
+- `categories`: a list of plain identifiers from the supplied local taxonomy's
+  `shops` group. Category status is always `review` or `missing`.
 - `accessibility`: `accessible`, `non_accessible`, or `not_specified`.
   Never infer accessibility from photos or absence of a warning.
 - `sustainability_label`: only an explicitly named sustainability label or

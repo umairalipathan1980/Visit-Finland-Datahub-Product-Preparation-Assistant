@@ -6,7 +6,7 @@
   "provenance": "This schema and the category file were written for demonstration purposes from general domain knowledge of the Accommodation product type and typical DataHub curator concepts (found/review/missing status, evidence requirement, tri-state accessibility, category limits). They are NOT transcribed from official DataHub curator documentation and have not been confirmed against a machine-readable DataHub source.",
   "known_gaps": [
     "Field list is a representative subset (name, description, address, coordinates, contact, categories, accessibility, sustainability_label, stf_status, capacity, pricing, booking_url, availability, opening_hours, amenities, languages_spoken, images) and is not the complete DataHub Accommodation field list.",
-    "Stable category identifiers are invented for this PoC (e.g. 'accommodation.hotel') and are not DataHub's real category identifiers.",
+    "Stable category identifiers are invented for this PoC (e.g. 'hotel') and are not DataHub's real category identifiers.",
     "schemas/datahub-categories.json holds ~20 entries, not DataHub's full ~200-entry taxonomy. This is a deliberate PoC-scope decision, not a placeholder pending Phase 0 transcription -- see the plan's 'Category vocabulary' section. Expanding it is out of scope for this release.",
     "Required-versus-conditionally-required distinctions per DataHub product subtype are not encoded.",
     "Cardinality constraints beyond the categories array are not encoded.",

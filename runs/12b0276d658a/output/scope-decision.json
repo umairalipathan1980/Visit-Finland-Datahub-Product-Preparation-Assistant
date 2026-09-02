@@ -1,0 +1,141 @@
+{
+  "status": "scope_ambiguous",
+  "error_code": "multiple_accommodation_products",
+  "reason": "Villa Maija (https://hangofarm.fi/loma-asunto-hanko/hotelli-villa-maija-hanko) is a clearly bounded single Accommodation product: one restored 1888 historic villa building containing 4 named apartments (Eastside, Southside, Westside, Upperside) sharing one address, one management company, and one booking system (villamaija.guestybookings.com). However, the same site's 'Muut kohteet' page (https://hangofarm.fi/loma-asunto-hanko/vuokra-asunto-hanko) lists 16 additional, individually named apartments/villas at different street addresses across Hanko (e.g. Villa Rosa, Serenity Suite, Villa Granit View, Hangon Herttua, etc.), each with its own distinct Guesty booking property ID, capacity, and amenity set, managed by the same company (Hangö Farm / C&E Rosenberg Oy) but not sharing a single physical building or address with Villa Maija or each other. These are not room types or seasonal packages within one product -- they are separate physical rental properties, so this constitutes multiple candidate Accommodation products under one domain. No single source resolves which one property should be 'the' Accommodation record for this run. Villa Maija was retained as the extracted product because it is the most completely documented single-building candidate with its own dedicated page; the other 16 are preserved as alternatives and must not be merged into Villa Maija's fields.",
+  "product": {
+    "pages": [
+      "p001",
+      "p002",
+      "p004",
+      "p005"
+    ],
+    "summary": "Villa Maija: a fully renovated (2022-2023) 1888 historic villa in Hanko (Appelgrenintie 7, 10900 Hanko), operated by Hangö Farm (C&E Rosenberg Oy), offering 4 furnished short-term-rental apartments (Villa Maija 1 Eastside, 2 Southside, 3 Westside, 4 Upperside) that share one booking system (villamaija.guestybookings.com) and one shared terrace. Open year-round."
+  },
+  "excluded": [
+    {
+      "item": "Hangö Farm VINTAGE / Horse and Hound Hanko news articles",
+      "url": "https://hangofarm.fi/hankovintage / https://hangofarm.fi/horseandhoundhanko",
+      "reason": "News/event announcements, not accommodation facts"
+    },
+    {
+      "item": "Villa Maija yoga retreat announcement",
+      "url": "https://hangofarm.fi/villamaija_joogaretriitti_hanko",
+      "reason": "Seasonal package/event, not a separate product per granularity rule"
+    },
+    {
+      "item": "Webshop / gift cards",
+      "url": "https://store.hangofarm.fi/",
+      "reason": "E-commerce storefront, not accommodation content"
+    },
+    {
+      "item": "Villa Maija breakfast add-on product",
+      "url": "https://store.hangofarm.fi/store/p/villa-maijan-aamiainen",
+      "reason": "Ancillary paid add-on, not core accommodation pricing"
+    },
+    {
+      "item": "Booking terms and conditions page",
+      "url": "https://hangofarm.fi/varausehdot",
+      "reason": "Not fetched; general T&Cs, not product-specific facts"
+    },
+    {
+      "item": "Newsletter signup, privacy policy, social media links",
+      "url": "https://mailchi.mp/... ; https://hangofarm.fi/rekisteriseloste ; facebook/instagram",
+      "reason": "Administrative/marketing links, not product facts"
+    },
+    {
+      "item": "Blog index",
+      "url": "https://hangofarm.fi/blogi",
+      "reason": "Not fetched; general content index"
+    }
+  ],
+  "additional_products": [
+    {
+      "name": "Villa Rosa",
+      "url": "https://villamaija.guestybookings.com/en/properties/688fd07d1c98ac0013433fbc",
+      "note": "2-bedroom apartment, sleeps 3, Appelgrenintie area"
+    },
+    {
+      "name": "Serenity Suite",
+      "url": "https://villamaija.guestybookings.com/en/properties/67d9ce928f938500302f5566",
+      "note": "1-bedroom apartment, sleeps 2"
+    },
+    {
+      "name": "Villa Granit View",
+      "url": "https://villamaija.guestybookings.com/en/properties/67c30e90890a6e0010932e00",
+      "note": "2-bedroom apartment over Itäsatama, sleeps up to 4, dog-friendly"
+    },
+    {
+      "name": "Hangon Herttua",
+      "url": "https://villamaija.guestybookings.com/en/properties/6761e9e80bd0080013595ddb",
+      "note": "2-bedroom apartment on Oikokatu, accessible, dog-friendly, sauna"
+    },
+    {
+      "name": "Villa Magnus Studio",
+      "url": "https://villamaija.guestybookings.com/en/properties/67fd54cb8cd80700120d1e2f",
+      "note": "Studio apartment near Kylpyläpuisto"
+    },
+    {
+      "name": "Villa Aurinko",
+      "url": "https://villamaija.guestybookings.com/en/properties/65a4f91cdcae6f000ec3c2d3",
+      "note": "Small apartment on Bulevardi, sleeps 2, dog-friendly, monthly rental off-season"
+    },
+    {
+      "name": "Solara Suite / Kuningatarranta",
+      "url": "https://villamaija.guestybookings.com/en/properties/661194fcfa90ea00125b5d25",
+      "note": "2-bedroom sea-view apartment, sauna, small dogs allowed"
+    },
+    {
+      "name": "Villa Primavera",
+      "url": "https://villamaija.guestybookings.com/en/properties/65665e8c123f4b0012e4a7ab",
+      "note": "Half of a garden villa in Kylpyläpuisto, sleeps 4, dog-friendly"
+    },
+    {
+      "name": "Villa Granit",
+      "url": "https://villamaija.guestybookings.com/en/properties/660d8a7a7e2d46004a96ce3a",
+      "note": "Apartment sleeping 2-3, own patio, dog-friendly, monthly rental off-season"
+    },
+    {
+      "name": "Regatta Suite",
+      "url": "https://villamaija.guestybookings.com/en/properties/65c7f6456c9a780012822356",
+      "note": "Sea-view apartment near Regatta Spa, accessible, no dogs"
+    },
+    {
+      "name": "Surf & Turf",
+      "url": "https://villamaija.guestybookings.com/en/properties/654be01f69ec65003e29c436",
+      "note": "Apartment on Korkeavuorenkatu with own terrace, small dogs allowed, monthly rental off-season"
+    },
+    {
+      "name": "Gunnarstrand Surf House",
+      "url": "https://villamaija.guestybookings.com/en/properties/66dc9580e744130013e0b4d9",
+      "note": "Whole beach house, 3 bedrooms + outbuilding, sleeps 8, sauna, dog-friendly"
+    },
+    {
+      "name": "Villa Lotta",
+      "url": "https://villamaija.guestybookings.com/en/properties/65c8019101bc37000e7558ab",
+      "note": "Whole house in Hangonkylä, sleeps 8, 3 bedrooms, sauna, dog-friendly"
+    },
+    {
+      "name": "Villa Amanda",
+      "url": "https://villamaija.guestybookings.com/en/properties/66f5a7b385bdf6001198c3e9",
+      "note": "Apartment in a historic building, sleeps 3, no dogs, monthly rental off-season"
+    },
+    {
+      "name": "Hanko Holiday",
+      "url": "https://villamaija.guestybookings.com/en/properties/66df49f7b8c966001376b93d",
+      "note": "2-bedroom apartment at Hangon Laituri, sleeps 4, accessible, sauna, no dogs, monthly rental off-season"
+    },
+    {
+      "name": "Hanko Harbor Studio",
+      "url": "https://villamaija.guestybookings.com/en/properties/66e2e56066be69001a2a4d38",
+      "note": "Studio at Hangon Laituri, sleeps 2, accessible, sauna, no dogs, monthly rental off-season"
+    }
+  ],
+  "out_of_type_facilities": [
+    {
+      "name": "Hangö Farm Deli",
+      "url": "https://hangofarm.fi/deli",
+      "product_type": "restaurant",
+      "note": "Restaurant/cafe at Satamakatu 3, 10900 Hanko, separately operated with own opening hours; not extracted as Accommodation."
+    }
+  ]
+}

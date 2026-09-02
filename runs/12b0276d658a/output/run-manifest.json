@@ -1,0 +1,310 @@
+{
+  "status": "completed",
+  "error_code": null,
+  "exit_code": 0,
+  "stage_reached": "stage_7",
+  "finalized_at": "2026-09-02T20:03:17.666735+00:00",
+  "skill_verification_method": "typed_load_skill",
+  "denied_tool_calls": [],
+  "artifact_hashes": {
+    "result.json": "106ee8fc7953029c6b92df141c164a78f0bf5f7577b6efda961cc24f8dd93eb3",
+    "canonical-product.json": "a7279b06b81c6ca0dda25da6135d1745d27c11e9910a51ab9bd23ae2e61dfd52",
+    "result.xlsx": "f6210aee0c3508c12fca7cb74aa0bf54366fdc084a277f9f2cd8fa5ad559fc82",
+    "review-report.md": "15c5af7149f416006e9be15864eeda4c245ad9a12b3d70b29954728658c53f46",
+    "sources.json": "f5d228b622825d7912e727143fba05474f6fee035b58f73b40e406039752e926",
+    "scope-decision.json": "7931dc3e265ef7ea06c72ce3a4e9961639c7266f27aeeb63b7289a0cb0a18703"
+  },
+  "scope_review_required": true,
+  "scope_decision": {
+    "status": "scope_ambiguous",
+    "error_code": "multiple_accommodation_products",
+    "reason": "Villa Maija (https://hangofarm.fi/loma-asunto-hanko/hotelli-villa-maija-hanko) is a clearly bounded single Accommodation product: one restored 1888 historic villa building containing 4 named apartments (Eastside, Southside, Westside, Upperside) sharing one address, one management company, and one booking system (villamaija.guestybookings.com). However, the same site's 'Muut kohteet' page (https://hangofarm.fi/loma-asunto-hanko/vuokra-asunto-hanko) lists 16 additional, individually named apartments/villas at different street addresses across Hanko (e.g. Villa Rosa, Serenity Suite, Villa Granit View, Hangon Herttua, etc.), each with its own distinct Guesty booking property ID, capacity, and amenity set, managed by the same company (Hang\u00f6 Farm / C&E Rosenberg Oy) but not sharing a single physical building or address with Villa Maija or each other. These are not room types or seasonal packages within one product -- they are separate physical rental properties, so this constitutes multiple candidate Accommodation products under one domain. No single source resolves which one property should be 'the' Accommodation record for this run. Villa Maija was retained as the extracted product because it is the most completely documented single-building candidate with its own dedicated page; the other 16 are preserved as alternatives and must not be merged into Villa Maija's fields.",
+    "product": {
+      "pages": [
+        "p001",
+        "p002",
+        "p004",
+        "p005"
+      ],
+      "summary": "Villa Maija: a fully renovated (2022-2023) 1888 historic villa in Hanko (Appelgrenintie 7, 10900 Hanko), operated by Hang\u00f6 Farm (C&E Rosenberg Oy), offering 4 furnished short-term-rental apartments (Villa Maija 1 Eastside, 2 Southside, 3 Westside, 4 Upperside) that share one booking system (villamaija.guestybookings.com) and one shared terrace. Open year-round."
+    },
+    "excluded": [
+      {
+        "item": "Hang\u00f6 Farm VINTAGE / Horse and Hound Hanko news articles",
+        "url": "https://hangofarm.fi/hankovintage / https://hangofarm.fi/horseandhoundhanko",
+        "reason": "News/event announcements, not accommodation facts"
+      },
+      {
+        "item": "Villa Maija yoga retreat announcement",
+        "url": "https://hangofarm.fi/villamaija_joogaretriitti_hanko",
+        "reason": "Seasonal package/event, not a separate product per granularity rule"
+      },
+      {
+        "item": "Webshop / gift cards",
+        "url": "https://store.hangofarm.fi/",
+        "reason": "E-commerce storefront, not accommodation content"
+      },
+      {
+        "item": "Villa Maija breakfast add-on product",
+        "url": "https://store.hangofarm.fi/store/p/villa-maijan-aamiainen",
+        "reason": "Ancillary paid add-on, not core accommodation pricing"
+      },
+      {
+        "item": "Booking terms and conditions page",
+        "url": "https://hangofarm.fi/varausehdot",
+        "reason": "Not fetched; general T&Cs, not product-specific facts"
+      },
+      {
+        "item": "Newsletter signup, privacy policy, social media links",
+        "url": "https://mailchi.mp/... ; https://hangofarm.fi/rekisteriseloste ; facebook/instagram",
+        "reason": "Administrative/marketing links, not product facts"
+      },
+      {
+        "item": "Blog index",
+        "url": "https://hangofarm.fi/blogi",
+        "reason": "Not fetched; general content index"
+      }
+    ],
+    "additional_products": [
+      {
+        "name": "Villa Rosa",
+        "url": "https://villamaija.guestybookings.com/en/properties/688fd07d1c98ac0013433fbc",
+        "note": "2-bedroom apartment, sleeps 3, Appelgrenintie area"
+      },
+      {
+        "name": "Serenity Suite",
+        "url": "https://villamaija.guestybookings.com/en/properties/67d9ce928f938500302f5566",
+        "note": "1-bedroom apartment, sleeps 2"
+      },
+      {
+        "name": "Villa Granit View",
+        "url": "https://villamaija.guestybookings.com/en/properties/67c30e90890a6e0010932e00",
+        "note": "2-bedroom apartment over It\u00e4satama, sleeps up to 4, dog-friendly"
+      },
+      {
+        "name": "Hangon Herttua",
+        "url": "https://villamaija.guestybookings.com/en/properties/6761e9e80bd0080013595ddb",
+        "note": "2-bedroom apartment on Oikokatu, accessible, dog-friendly, sauna"
+      },
+      {
+        "name": "Villa Magnus Studio",
+        "url": "https://villamaija.guestybookings.com/en/properties/67fd54cb8cd80700120d1e2f",
+        "note": "Studio apartment near Kylpyl\u00e4puisto"
+      },
+      {
+        "name": "Villa Aurinko",
+        "url": "https://villamaija.guestybookings.com/en/properties/65a4f91cdcae6f000ec3c2d3",
+        "note": "Small apartment on Bulevardi, sleeps 2, dog-friendly, monthly rental off-season"
+      },
+      {
+        "name": "Solara Suite / Kuningatarranta",
+        "url": "https://villamaija.guestybookings.com/en/properties/661194fcfa90ea00125b5d25",
+        "note": "2-bedroom sea-view apartment, sauna, small dogs allowed"
+      },
+      {
+        "name": "Villa Primavera",
+        "url": "https://villamaija.guestybookings.com/en/properties/65665e8c123f4b0012e4a7ab",
+        "note": "Half of a garden villa in Kylpyl\u00e4puisto, sleeps 4, dog-friendly"
+      },
+      {
+        "name": "Villa Granit",
+        "url": "https://villamaija.guestybookings.com/en/properties/660d8a7a7e2d46004a96ce3a",
+        "note": "Apartment sleeping 2-3, own patio, dog-friendly, monthly rental off-season"
+      },
+      {
+        "name": "Regatta Suite",
+        "url": "https://villamaija.guestybookings.com/en/properties/65c7f6456c9a780012822356",
+        "note": "Sea-view apartment near Regatta Spa, accessible, no dogs"
+      },
+      {
+        "name": "Surf & Turf",
+        "url": "https://villamaija.guestybookings.com/en/properties/654be01f69ec65003e29c436",
+        "note": "Apartment on Korkeavuorenkatu with own terrace, small dogs allowed, monthly rental off-season"
+      },
+      {
+        "name": "Gunnarstrand Surf House",
+        "url": "https://villamaija.guestybookings.com/en/properties/66dc9580e744130013e0b4d9",
+        "note": "Whole beach house, 3 bedrooms + outbuilding, sleeps 8, sauna, dog-friendly"
+      },
+      {
+        "name": "Villa Lotta",
+        "url": "https://villamaija.guestybookings.com/en/properties/65c8019101bc37000e7558ab",
+        "note": "Whole house in Hangonkyl\u00e4, sleeps 8, 3 bedrooms, sauna, dog-friendly"
+      },
+      {
+        "name": "Villa Amanda",
+        "url": "https://villamaija.guestybookings.com/en/properties/66f5a7b385bdf6001198c3e9",
+        "note": "Apartment in a historic building, sleeps 3, no dogs, monthly rental off-season"
+      },
+      {
+        "name": "Hanko Holiday",
+        "url": "https://villamaija.guestybookings.com/en/properties/66df49f7b8c966001376b93d",
+        "note": "2-bedroom apartment at Hangon Laituri, sleeps 4, accessible, sauna, no dogs, monthly rental off-season"
+      },
+      {
+        "name": "Hanko Harbor Studio",
+        "url": "https://villamaija.guestybookings.com/en/properties/66e2e56066be69001a2a4d38",
+        "note": "Studio at Hangon Laituri, sleeps 2, accessible, sauna, no dogs, monthly rental off-season"
+      }
+    ],
+    "out_of_type_facilities": [
+      {
+        "name": "Hang\u00f6 Farm Deli",
+        "url": "https://hangofarm.fi/deli",
+        "product_type": "restaurant",
+        "note": "Restaurant/cafe at Satamakatu 3, 10900 Hanko, separately operated with own opening hours; not extracted as Accommodation."
+      }
+    ]
+  },
+  "telemetry": {
+    "workflow_mode": "coarse_tools",
+    "started_at": "2026-09-02T19:58:46.774646+00:00",
+    "finished_at": "2026-09-02T20:03:17.665735+00:00",
+    "duration_ms": 270891,
+    "operations": [
+      {
+        "name": "load_skill",
+        "stage": "stage_0_bootstrap",
+        "started_at": "2026-09-02T19:58:49.163044+00:00",
+        "retry_count": 0,
+        "status": "ok",
+        "finished_at": "2026-09-02T19:58:49.182331+00:00",
+        "duration_ms": 15,
+        "skill_sha256": "fc7f6665a5d6243d4629f7d20784e0cbce216418cfad6fc616699b28f558c738"
+      },
+      {
+        "name": "validate_sources",
+        "stage": "stage_1",
+        "started_at": "2026-09-02T19:58:50.576765+00:00",
+        "retry_count": 0,
+        "status": "ok",
+        "finished_at": "2026-09-02T19:58:50.882178+00:00",
+        "duration_ms": 312,
+        "sources": 1,
+        "documents": 0
+      },
+      {
+        "name": "parse_documents",
+        "stage": "stage_2",
+        "started_at": "2026-09-02T19:58:50.902715+00:00",
+        "retry_count": 0,
+        "documents_requested": 0,
+        "status": "ok",
+        "finished_at": "2026-09-02T19:58:50.918993+00:00",
+        "duration_ms": 16,
+        "documents_parsed": 0,
+        "empty_fast_path": true
+      },
+      {
+        "name": "fetch_seed_pages",
+        "stage": "stage_3",
+        "started_at": "2026-09-02T19:58:50.927009+00:00",
+        "retry_count": 0,
+        "seeds": 1,
+        "status": "ok",
+        "finished_at": "2026-09-02T19:58:51.704720+00:00",
+        "duration_ms": 781,
+        "fetched": 1,
+        "failures": 0,
+        "total_pages": 1,
+        "total_content_bytes": 58503,
+        "concurrency": 5,
+        "budget_rejections": 0,
+        "evidence_chars_queued": 9204
+      },
+      {
+        "name": "read_context_page",
+        "stage": "stage_3",
+        "started_at": "2026-09-02T19:58:53.290152+00:00",
+        "retry_count": 0,
+        "cursor": "ctx0001",
+        "status": "ok",
+        "finished_at": "2026-09-02T19:58:53.304399+00:00",
+        "duration_ms": 15,
+        "evidence_chunks": 1,
+        "evidence_chars_returned": 9204,
+        "candidate_links": 15,
+        "context_complete": true
+      },
+      {
+        "name": "fetch_selected_pages",
+        "stage": "stage_3",
+        "started_at": "2026-09-02T19:59:04.199793+00:00",
+        "retry_count": 0,
+        "requested": 6,
+        "recovery_pass": false,
+        "status": "ok",
+        "finished_at": "2026-09-02T19:59:09.054716+00:00",
+        "duration_ms": 4859,
+        "fetched": 4,
+        "failures": 0,
+        "total_pages": 5,
+        "total_content_bytes": 229378,
+        "concurrency": 5,
+        "budget_rejections": 0,
+        "evidence_chars_queued": 29410
+      },
+      {
+        "name": "read_context_page",
+        "stage": "stage_3",
+        "started_at": "2026-09-02T19:59:10.446971+00:00",
+        "retry_count": 0,
+        "cursor": "ctx0002",
+        "status": "ok",
+        "finished_at": "2026-09-02T19:59:10.462777+00:00",
+        "duration_ms": 16,
+        "evidence_chunks": 4,
+        "evidence_chars_returned": 29410,
+        "candidate_links": 2,
+        "context_complete": true
+      },
+      {
+        "name": "record_scope",
+        "stage": "stage_4",
+        "started_at": "2026-09-02T20:02:17.410509+00:00",
+        "retry_count": 0,
+        "status": "ok",
+        "finished_at": "2026-09-02T20:02:17.417567+00:00",
+        "duration_ms": 16,
+        "scope_status": "scope_ambiguous"
+      },
+      {
+        "name": "submit_extraction",
+        "stage": "stage_5",
+        "started_at": "2026-09-02T20:02:44.748963+00:00",
+        "retry_count": 0,
+        "submission": 1,
+        "status": "ok",
+        "finished_at": "2026-09-02T20:02:44.950371+00:00",
+        "duration_ms": 203,
+        "valid": true,
+        "error_count": 0,
+        "warning_count": 0
+      },
+      {
+        "name": "finalize_outputs",
+        "stage": "stage_7",
+        "started_at": "2026-09-02T20:03:11.576077+00:00",
+        "retry_count": 0,
+        "status": "ok",
+        "finished_at": "2026-09-02T20:03:12.032980+00:00",
+        "duration_ms": 453,
+        "artifacts": 6
+      }
+    ],
+    "model": {
+      "turns": 9,
+      "transcript_messages": 2765,
+      "tool_calls": 8,
+      "tool_errors": 0
+    },
+    "terminal_status": "completed",
+    "terminal_error_code": null,
+    "evidence_chars_returned": 38614,
+    "context_chars_queued": 43688,
+    "context_pages_queued": 2,
+    "context_pages_delivered": 2
+  },
+  "approved": true,
+  "approved_at": "2026-09-02T20:04:04.568796+00:00"
+}

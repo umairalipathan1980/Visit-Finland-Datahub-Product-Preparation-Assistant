@@ -1,0 +1,41 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-accommodation-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-02T20:03:11.633371+00:00"
+  },
+  "product_type": "accommodation",
+  "fields": {
+    "name": {
+      "fi": "Villa Maija"
+    },
+    "description": {
+      "fi": "Villa Maija on yksi Hangon tunnetuimmista pitsihuviloista ja avoinna vuoden jokaisena p\u00e4iv\u00e4n\u00e4. Villa Maija tarjoaa loistavan mahdollisuuden nopeaan irtiottoon arjesta. Y\u00f6pyminen aidossa 1800-luvun huvilassa Hangon paraatipaikalla on ainutlaatuinen el\u00e4mys."
+    },
+    "address": {
+      "street": "Appelgrenintie 7",
+      "postal_code": "10900",
+      "city": "Hanko"
+    },
+    "contact": {
+      "email": "hello@hangofarm.fi",
+      "phone": "+358 50 505 2013",
+      "website": "https://hangofarm.fi/"
+    },
+    "booking_url": "https://villamaija.guestybookings.com/",
+    "availability": {
+      "open_year_round": true,
+      "minimum_stay_nights": 1,
+      "notes": "Minimi y\u00f6pyminen on yksi y\u00f6, ja kes\u00e4ll\u00e4 kes\u00e4kuu-elokuu kolme y\u00f6t\u00e4. Avaamme my\u00f6s kes\u00e4ll\u00e4 mahdollisuuden lyhyempiin y\u00f6pymisiin, jos majoitusten v\u00e4lille j\u00e4\u00e4 tyhji\u00e4 \u00f6it\u00e4."
+    },
+    "amenities": [
+      "private bathroom (shower and toilet) in every apartment",
+      "air conditioning",
+      "washing machine",
+      "fully equipped kitchen",
+      "shared terrace for all guests",
+      "sauna (Villa Maija 2 Southside only)"
+    ]
+  }
+}

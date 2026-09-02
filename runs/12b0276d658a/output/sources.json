@@ -1,0 +1,20 @@
+{
+  "sources": [
+    {
+      "source_id": "p001",
+      "source_type": "website",
+      "title": "Hangö Farm - loma-asunnot ja majoitus Hangossa",
+      "url": "https://hangofarm.fi/",
+      "retrieved_at": "2026-09-02T19:58:51.655359+00:00",
+      "citation_count": 1
+    },
+    {
+      "source_id": "p002",
+      "source_type": "website",
+      "title": "Huvilamajoitus Villa Maija Hanko",
+      "url": "https://hangofarm.fi/loma-asunto-hanko/hotelli-villa-maija-hanko/",
+      "retrieved_at": "2026-09-02T19:59:08.852539+00:00",
+      "citation_count": 17
+    }
+  ]
+}

@@ -2,7 +2,11 @@
 
 ## Introduction
 
-This application creates evidence-grounded Visit Finland DataHub records for Accommodation and Shops products from website URLs and optional PDF or DOCX files. It produces reviewable JSON, Excel, Markdown, and source-reference artifacts. It does not submit records to Visit Finland DataHub.
+This application prepares evidence-grounded product records for the Visit Finland DataHub.
+
+It currently supports Accommodation and Shops and produces reviewable JSON, Excel, Markdown, and source-reference artifacts. It does not submit records automatically.
+
+The user selects a product type, such as Accommodation or Shops, and supplies one or more URLs with optional PDF or DOCX files. The tool analyzes the sources, combines their evidence, determines the product scope—such as the specific accommodation or shop represented—using predefined scope schemas, performs structured extraction against the selected schema, validates the record, and prepares outputs for entry into the Visit Finland DataHub, now operated by Business Finland.
 
 ## Architecture
 

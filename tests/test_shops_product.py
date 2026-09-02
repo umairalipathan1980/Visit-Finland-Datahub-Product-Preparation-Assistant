@@ -24,7 +24,7 @@ def shops_draft(category_id="shops.artisan"):
     return {
         "run_metadata": {
             "schema_name": "poc-shops-schema-v1",
-            "schema_version": "0.1.0-poc",
+            "schema_version": "0.2.0-poc",
             "category_taxonomy_version": "poc-subset-0.2",
             "generated_at": "2026-09-02T00:00:00Z",
         },

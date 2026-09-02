@@ -22,8 +22,8 @@ envelope in `schemas/shops-extraction.schema.json`.
   certification.
 - `stf_status`: `certified`, `not_certified`, or `not_specified`, and
   only for the named Sustainable Travel Finland program.
-- `opening_hours`: opening hours for the selected location. Preserve
-  seasonal or exceptional wording in notes when it cannot be represented
-  cleanly.
+- `opening_hours`: use the structured schedule defined in
+  `references/opening-hours.md`. Hours must belong to the selected location;
+  preserve seasonal or exceptional wording in notes.
 - `languages_spoken`: languages explicitly offered by the selected business.
 - `images`: always `not_in_scope` in this release and carries no evidence.

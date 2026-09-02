@@ -6,6 +6,78 @@
   "additionalProperties": false,
   "required": ["run_metadata", "product_type", "fields"],
   "$defs": {
+
+    "day": {
+      "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    },
+    "time": {
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+    },
+    "openingHoursEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["days"],
+      "properties": {
+        "days": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/day" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "opens": { "$ref": "#/$defs/time" },
+        "closes": { "$ref": "#/$defs/time" },
+        "closed": { "type": "boolean" },
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "dependentRequired": {
+        "opens": ["closes"],
+        "closes": ["opens"]
+      },
+      "anyOf": [
+        { "required": ["opens", "closes"] },
+        { "required": ["closed"], "properties": { "closed": { "const": true } } },
+        { "required": ["notes"] }
+      ]
+    },
+    "openingHoursException": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "label": { "type": "string", "minLength": 1 },
+        "opens": { "$ref": "#/$defs/time" },
+        "closes": { "$ref": "#/$defs/time" },
+        "closed": { "type": "boolean" },
+        "notes": { "type": "string", "minLength": 1 }
+      },
+      "dependentRequired": {
+        "opens": ["closes"],
+        "closes": ["opens"]
+      },
+      "anyOf": [
+        { "required": ["date"] },
+        { "required": ["label"] }
+      ]
+    },
+    "openingHours": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "regular": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/openingHoursEntry" },
+          "minItems": 1
+        },
+        "exceptions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/openingHoursException" },
+          "minItems": 1
+        },
+        "notes": { "type": "string", "minLength": 1 }
+      }
+    },
     "status": { "enum": ["found", "review", "missing", "not_in_scope"] },
     "evidenceEntry": {
       "type": "object",
@@ -96,7 +168,15 @@
         "pricing": { "$ref": "#/$defs/fieldEnvelope" },
         "booking_url": { "$ref": "#/$defs/fieldEnvelope" },
         "availability": { "$ref": "#/$defs/fieldEnvelope" },
-        "opening_hours": { "$ref": "#/$defs/fieldEnvelope" },
+        "opening_hours": {
+          "allOf": [
+            { "$ref": "#/$defs/fieldEnvelope" },
+            {
+              "if": { "required": ["value"] },
+              "then": { "properties": { "value": { "$ref": "#/$defs/openingHours" } } }
+            }
+          ]
+        },
         "amenities": { "$ref": "#/$defs/fieldEnvelope" },
         "languages_spoken": { "$ref": "#/$defs/fieldEnvelope" },
         "images": { "$ref": "#/$defs/fieldEnvelope" }

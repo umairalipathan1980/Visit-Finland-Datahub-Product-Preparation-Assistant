@@ -1,6 +1,6 @@
 {
   "schema_name": "poc-accommodation-schema-v1",
-  "schema_version": "0.1.0-poc",
+  "schema_version": "0.2.0-poc",
   "captured_by": "PoC implementation session, not Visit Finland curator staff",
   "captured_at": "2026-09-01",
   "provenance": "This schema and the category file were written for demonstration purposes from general domain knowledge of the Accommodation product type and typical DataHub curator concepts (found/review/missing status, evidence requirement, tri-state accessibility, category limits). They are NOT transcribed from official DataHub curator documentation and have not been confirmed against a machine-readable DataHub source.",

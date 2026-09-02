@@ -556,7 +556,7 @@ def build_optimized_tool_server(
             )
             for name in [
                 "general-curation.md", guidance_name, semantics_name,
-                "source-and-evidence-policy.md",
+                "opening-hours.md", "source-and-evidence-policy.md",
             ]:
                 references[name] = (state.package_dir / "references" / name).read_text(encoding="utf-8")
             extraction_schema_name = f"{state.product_type}-extraction.schema.json"

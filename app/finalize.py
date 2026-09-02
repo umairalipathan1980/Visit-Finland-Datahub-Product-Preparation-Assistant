@@ -160,6 +160,8 @@ def classify_and_finalize(workspace: Path, denials: list, verification_method: s
         if scope_review_required and not (staging_dir / "scope-decision.json").is_file():
             shutil.copy2(workspace / "work" / "scope-decision.json", staging_dir / "scope-decision.json")
         artifact_names = ["result.json", "canonical-product.json", "result.xlsx", "review-report.md"]
+        if (staging_dir / "sources.json").is_file():
+            artifact_names.append("sources.json")
         if (staging_dir / "scope-decision.json").is_file():
             artifact_names.append("scope-decision.json")
         artifact_hashes = {

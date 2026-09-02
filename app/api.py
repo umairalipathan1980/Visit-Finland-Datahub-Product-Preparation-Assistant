@@ -40,7 +40,7 @@ DEFAULT_ENV_FILE = REPO_ROOT / ".env"
 # a client-supplied path, so a workspace path can never reach the browser.
 ARTIFACT_NAMES = {
     "result.json", "canonical-product.json", "result.xlsx", "review-report.md",
-    "run-manifest.json", "scope-decision.json", "extraction-draft.json",
+    "run-manifest.json", "scope-decision.json", "extraction-draft.json", "sources.json",
     "approved-product.json",
 }
 

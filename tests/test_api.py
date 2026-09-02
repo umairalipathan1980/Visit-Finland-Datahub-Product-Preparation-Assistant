@@ -18,6 +18,7 @@ async def _fake_completed_run(workspace, package_dir, env_bundle, on_event=None)
     (output_dir / "canonical-product.json").write_text("{}", encoding="utf-8")
     (output_dir / "result.xlsx").write_bytes(b"fake-xlsx")
     (output_dir / "review-report.md").write_text("# report", encoding="utf-8")
+    (output_dir / "sources.json").write_text(json.dumps({"sources": []}), encoding="utf-8")
     (output_dir / "run-manifest.json").write_text(json.dumps({
         "status": "completed", "error_code": None, "stage_reached": "stage_7",
     }), encoding="utf-8")
@@ -79,6 +80,7 @@ def test_get_run_reaches_completed_status(client):
     assert body["stage_reached"] == "stage_7"
     assert "result.json" in body["artifacts"]
     assert "run-manifest.json" in body["artifacts"]
+    assert "sources.json" in body["artifacts"]
 
 
 def test_get_artifact_returns_file_content(client):
@@ -89,6 +91,10 @@ def test_get_artifact_returns_file_content(client):
     artifact_resp = client.get(f"/runs/{run_id}/artifacts/result.json")
     assert artifact_resp.status_code == 200
     assert artifact_resp.json() == {}
+
+    sources_resp = client.get(f"/runs/{run_id}/artifacts/sources.json")
+    assert sources_resp.status_code == 200
+    assert sources_resp.json() == {"sources": []}
 
 
 def test_get_artifact_unknown_name_returns_404(client):

@@ -1,4 +1,4 @@
-﻿import json
+import json
 from pathlib import Path
 
 import pytest
@@ -131,8 +131,11 @@ async def test_complete_coarse_tool_sequence_uses_empty_document_fast_path(works
     final_payload = _payload(finalized)
     assert final_payload["status"] == "ok"
     assert set(final_payload["artifact_hashes"]) == {
-        "result.json", "canonical-product.json", "result.xlsx", "review-report.md",
+        "result.json", "canonical-product.json", "result.xlsx", "review-report.md", "sources.json",
     }
+    assert json.loads(
+        (workspace / "work" / "staging-output" / "sources.json").read_text(encoding="utf-8")
+    ) == {"sources": []}
     assert state.finalized is True
     assert calls == [
         "validate_source_manifest_optimized.py", "fetch_pages_optimized.py", "validate_extraction.py",

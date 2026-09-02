@@ -303,6 +303,73 @@ def _document_records(workspace: Path) -> list[dict[str, Any]]:
     return records
 
 
+def _cited_source_counts(result: dict[str, Any]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+
+    def visit(value: Any) -> None:
+        if isinstance(value, dict):
+            source_id = value.get("source_id")
+            if isinstance(source_id, str) and isinstance(value.get("excerpt"), str):
+                counts[source_id] = counts.get(source_id, 0) + 1
+            for child in value.values():
+                visit(child)
+        elif isinstance(value, list):
+            for child in value:
+                visit(child)
+
+    visit(result.get("fields", {}))
+    return counts
+
+
+def _build_source_catalog(workspace: Path, result: dict[str, Any]) -> dict[str, Any]:
+    cited = _cited_source_counts(result)
+    fetched = _read_json(workspace / "work" / "fetched-pages.json", {"pages": []})
+    parsed = _read_json(workspace / "work" / "parsed-documents.json", {"documents": []})
+
+    pages = {page.get("id"): page for page in fetched.get("pages", []) if page.get("id")}
+    documents = {
+        document.get("id"): document
+        for document in parsed.get("documents", [])
+        if document.get("id")
+    }
+
+    sources: list[dict[str, Any]] = []
+    for source_id in sorted(cited):
+        if source_id in pages:
+            page = pages[source_id]
+            metadata = _read_json(
+                workspace / "work" / "pages" / f"{source_id}.meta.json", {},
+            )
+            source = {
+                "source_id": source_id,
+                "source_type": "website",
+                "title": metadata.get("title") or page.get("title"),
+                "url": _display_url(
+                    page.get("final_url") or page.get("canonical_url") or page.get("url"),
+                ),
+                "retrieved_at": metadata.get("retrieved_at") or page.get("retrieved_at"),
+                "citation_count": cited[source_id],
+            }
+        elif source_id in documents:
+            document = documents[source_id]
+            source = {
+                "source_id": source_id,
+                "source_type": "document",
+                "file_name": document.get("file_name"),
+                "parsing_method": document.get("parsing_method"),
+                "citation_count": cited[source_id],
+            }
+        else:
+            source = {
+                "source_id": source_id,
+                "source_type": "unknown",
+                "citation_count": cited[source_id],
+            }
+        sources.append({key: value for key, value in source.items() if value is not None})
+
+    return {"sources": sources}
+
+
 TRACKING_QUERY_KEYS = {
     "fbclid", "gclid", "gbraid", "wbraid", "gad_source", "mc_cid", "mc_eid",
 }
@@ -991,7 +1058,7 @@ def build_optimized_tool_server(
         if result.get("validation", {}).get("valid") is not True:
             return _json_result({"status": "error", "error_code": "extraction_not_valid"}, is_error=True)
         if state.finalized:
-            artifacts = ["result.json", "canonical-product.json", "result.xlsx", "review-report.md"]
+            artifacts = ["result.json", "canonical-product.json", "result.xlsx", "review-report.md", "sources.json"]
             if (state.workspace / "work" / "staging-output" / "scope-decision.json").is_file():
                 artifacts.append("scope-decision.json")
             return _json_result({"status": "ok", "idempotent": True, "artifacts": artifacts})
@@ -1000,6 +1067,7 @@ def build_optimized_tool_server(
         canonical_path = staging / "canonical-product.json"
         xlsx_path = staging / "result.xlsx"
         report_path = staging / "review-report.md"
+        sources_path = staging / "sources.json"
         scope_path = state.workspace / "work" / "scope-decision.json"
         staged_scope_path = staging / "scope-decision.json"
         op = telemetry.start_operation("finalize_outputs", "stage_7")
@@ -1030,10 +1098,25 @@ def build_optimized_tool_server(
         try:
             result_document = _read_json(result_path)
             canonical_document = _read_json(canonical_path)
+            source_catalog = _build_source_catalog(state.workspace, result_document or {})
+            _write_json_atomic(sources_path, source_catalog)
             if not isinstance(result_document, dict) or not isinstance(result_document.get("fields"), dict):
                 raise ValueError("result.json has no fields object")
             if not isinstance(canonical_document, dict) or not isinstance(canonical_document.get("fields"), dict):
                 raise ValueError("canonical-product.json has no fields object")
+            if not isinstance(source_catalog.get("sources"), list):
+                raise ValueError("sources.json has no sources array")
+            source_ids = [source.get("source_id") for source in source_catalog["sources"]]
+            if any(not isinstance(source_id, str) for source_id in source_ids):
+                raise ValueError("sources.json contains an invalid source_id")
+            if len(source_ids) != len(set(source_ids)):
+                raise ValueError("sources.json contains duplicate source IDs")
+            for source in source_catalog["sources"]:
+                if source.get("source_type") == "website":
+                    url = source.get("url")
+                    parsed_url = urlsplit(url) if isinstance(url, str) else None
+                    if parsed_url is None or parsed_url.scheme not in {"http", "https"} or not parsed_url.netloc:
+                        raise ValueError("sources.json contains an invalid website URL")
             extraction_schema = _read_json(
                 state.package_dir / "schemas" / f"{state.product_type}-extraction.schema.json",
             )
@@ -1054,7 +1137,7 @@ def build_optimized_tool_server(
                 book.close()
             if report_path.stat().st_size < 20:
                 raise ValueError("review report is empty")
-            artifact_paths = [result_path, canonical_path, xlsx_path, report_path]
+            artifact_paths = [result_path, canonical_path, xlsx_path, report_path, sources_path]
             if staged_scope_path.is_file():
                 artifact_paths.append(staged_scope_path)
             state.artifact_hashes = {
@@ -1068,7 +1151,7 @@ def build_optimized_tool_server(
 
         state.finalized = True
         state.stage_reached = "stage_7"
-        artifacts = ["result.json", "canonical-product.json", "result.xlsx", "review-report.md"]
+        artifacts = ["result.json", "canonical-product.json", "result.xlsx", "review-report.md", "sources.json"]
         if staged_scope_path.is_file():
             artifacts.append("scope-decision.json")
         telemetry.finish_operation(op, artifacts=len(artifacts))

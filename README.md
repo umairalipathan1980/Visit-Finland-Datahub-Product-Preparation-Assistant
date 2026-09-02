@@ -94,11 +94,14 @@ runs/<run-id>/
     |-- canonical-product.json
     |-- result.xlsx
     |-- review-report.md
+    |-- sources.json
     `-- run-manifest.json
 ```
 
-Successful artifacts are promoted to `output/`. Intermediate and diagnostic
-files remain under `work/`.
+Successful artifacts are promoted to `output/`. `sources.json` contains sanitized
+metadata for only the website pages and uploaded documents cited by extraction
+evidence. The review page uses it for clickable per-field references and a
+consolidated source list. Intermediate and diagnostic files remain under `work/`.
 
 ## Prerequisites
 

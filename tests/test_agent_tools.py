@@ -138,6 +138,42 @@ async def test_ambiguous_scope_continues_to_extraction_with_review_instruction(w
 
 
 @pytest.mark.asyncio
+async def test_scope_is_blocked_until_every_context_page_is_read(workspace):
+    _server, state, _allowed, _telemetry = build_tools(workspace)
+    state.prepared = True
+    first_cursor, page_count, _chars, _candidates = agent_tools._queue_context_pages(
+        state,
+        [{"source_id": "p001", "source_type": "website", "text": "a" * 90_000}],
+        [],
+    )
+    assert page_count > 1
+    decision = {"scope_decision": {
+        "status": "scope_ambiguous",
+        "error_code": "product_boundary_unclear",
+        "reason": "The product boundary is unclear.",
+        "product": None,
+        "excluded": [],
+        "additional_products": [],
+        "out_of_type_facilities": [],
+    }}
+
+    blocked = await state.handlers["record_scope"](decision)
+    assert "context_not_fully_delivered" in blocked["content"][0]["text"]
+
+    cursor = first_cursor
+    delivered = ""
+    while cursor:
+        response = await state.handlers["read_context_page"]({"cursor": cursor})
+        payload = json.loads(response["content"][0]["text"])
+        delivered += "".join(item["text"] for item in payload["evidence"])
+        cursor = payload["next_cursor"]
+
+    assert delivered == "a" * 90_000
+    accepted = await state.handlers["record_scope"](decision)
+    assert json.loads(accepted["content"][0]["text"])["continue_to_extraction"] is True
+
+
+@pytest.mark.asyncio
 async def test_extraction_and_finalization_are_ordered(workspace):
     _server, state, _allowed, _telemetry = build_tools(workspace)
     extraction = await state.handlers["submit_extraction"]({"extraction": {}})

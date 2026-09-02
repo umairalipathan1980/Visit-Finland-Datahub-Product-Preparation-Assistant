@@ -7,34 +7,158 @@ from app.telemetry import RunTelemetry
 from conftest import PACKAGE_DIR
 
 
-def test_evidence_budget_is_fair_across_sources():
+def test_evidence_is_split_losslessly_across_sources():
     records = [
         {"source_id": "p001", "text": "a" * 30_000},
         {"source_id": "p002", "text": "b" * 30_000},
     ]
-    included, limitations = agent_tools._bounded_evidence(records)
-    assert [len(record["text"]) for record in included] == [20_000, 20_000]
-    assert {item["source_id"] for item in limitations} == {"p001", "p002"}
-    assert all(item["reason"] == "per_source_limit" for item in limitations)
+    items = agent_tools._evidence_context_items(records)
+
+    assert "".join(item["text"] for item in items if item["source_id"] == "p001") == "a" * 30_000
+    assert "".join(item["text"] for item in items if item["source_id"] == "p002") == "b" * 30_000
+    assert all(len(item["text"]) <= agent_tools.MAX_EVIDENCE_CHUNK_CHARS for item in items)
 
 
-def test_evidence_budget_is_global_across_tool_responses(workspace):
+def test_context_pages_are_bounded_and_preserve_all_text(workspace):
     _server, state, _allowed = agent_tools.build_optimized_tool_server(
         workspace, PACKAGE_DIR, RunTelemetry("test"),
     )
-    first_records = [
+    records = [
         {"source_id": f"p{index:03d}", "text": "a" * size}
         for index, size in enumerate([20_000, 20_000, 20_000, 19_990], start=1)
     ]
-    first, _limits = agent_tools._take_evidence_budget(state, first_records)
-    second, limitations = agent_tools._take_evidence_budget(
-        state, [{"source_id": "p002", "text": "b" * 20}],
+    first_cursor, page_count, evidence_chars, candidate_count = agent_tools._queue_context_pages(
+        state, records, [],
     )
 
-    assert sum(len(record["text"]) for record in first) == agent_tools.MAX_EVIDENCE_CHARS - 10
-    assert len(second[0]["text"]) == 10
-    assert limitations[0]["reason"] == "evidence_budget_exhausted"
-    assert state.evidence_chars_returned == agent_tools.MAX_EVIDENCE_CHARS
+    assert first_cursor == "ctx0001"
+    assert page_count > 1
+    assert evidence_chars == 79_990
+    assert candidate_count == 0
+    delivered = "".join(
+        item["text"]
+        for cursor in state.pending_context_cursors
+        for item in state.context_pages[cursor]["evidence"]
+    )
+    assert delivered == "".join(record["text"] for record in records)
+    assert all(
+        len(json.dumps(state.context_pages[cursor], ensure_ascii=False)) < agent_tools.MAX_CONTEXT_PAGE_CHARS + 1_000
+        for cursor in state.pending_context_cursors
+    )
+
+
+def test_context_projection_removes_duplicate_links_and_tracking_parameters():
+    records = [{
+        "source_id": "p001",
+        "source_type": "website",
+        "url": "https://example.fi/hotel?utm_source=x&room=2#g",
+        "text": "Complete hotel evidence.",
+        "internal_links": [{"href": "https://example.fi/contact"}],
+        "external_links": [{"href": "https://other.example/"}],
+    }]
+
+    item = agent_tools._evidence_context_items(records)[0]
+
+    assert item["url"] == "https://example.fi/hotel?room=2"
+    assert "internal_links" not in item
+    assert "external_links" not in item
+
+
+def test_document_flat_text_is_preserved_without_duplicate_segments():
+    text = "First paragraph.\n\nSecond paragraph with a table value."
+    records = [{
+        "source_id": "d001",
+        "source_type": "document",
+        "file_name": "hotel.pdf",
+        "parsing_method": "test",
+        "segments": [{"locator": "page 1", "text": text}],
+        "text": text,
+    }]
+
+    items = agent_tools._evidence_context_items(records)
+
+    assert "".join(item["text"] for item in items) == text
+    assert all("segments" not in item for item in items)
+
+
+def test_all_candidate_links_are_paginated_instead_of_capped(workspace):
+    links = [
+        {"text": f"Hotel page {index}", "href": f"https://example.fi/hotel/{index}"}
+        for index in range(150)
+    ]
+    (workspace / "work" / "pages" / "p001.txt").write_text("Hotel facts", encoding="utf-8")
+    (workspace / "work" / "pages" / "p001.meta.json").write_text(json.dumps({
+        "internal_link_details": links,
+    }), encoding="utf-8")
+    (workspace / "work" / "fetched-pages.json").write_text(json.dumps({
+        "pages": [{"id": "p001", "url": "https://example.fi/", "final_url": "https://example.fi/"}],
+        "failures": [],
+    }), encoding="utf-8")
+
+    candidates = agent_tools._candidate_entries(workspace)
+
+    assert len(candidates) == 150
+
+
+def test_total_context_budget_fails_instead_of_truncating(workspace, monkeypatch):
+    monkeypatch.setattr(agent_tools, "MAX_TOTAL_CONTEXT_CHARS", 100)
+    _server, state, _allowed = agent_tools.build_optimized_tool_server(
+        workspace, PACKAGE_DIR, RunTelemetry("test"),
+    )
+
+    with pytest.raises(ValueError, match="model_context_budget_exceeded"):
+        agent_tools._queue_context_pages(
+            state,
+            [{"source_id": "p001", "source_type": "website", "text": "x" * 500}],
+            [],
+        )
+
+    assert state.pending_context_cursors == []
+
+
+@pytest.mark.asyncio
+async def test_scandic_sized_context_is_delivered_losslessly_below_transport_guard(workspace):
+    _server, state, _allowed = agent_tools.build_optimized_tool_server(
+        workspace, PACKAGE_DIR, RunTelemetry("test"),
+    )
+    state.prepared = True
+    text = ("Scandic Grand Central Helsinki accommodation evidence.\n" * 28_000)[:1_400_000]
+    candidates = [{
+        "id": f"l{index:03d}",
+        "url": f"https://example.fi/hotel/{index}?utm_source=campaign&gclid={'x' * 300}",
+        "anchor_text": f"Hotel information {index}",
+        "surrounding_text": "Rooms, accessibility, sustainability and booking information.",
+        "discovered_on": "p001",
+    } for index in range(1, 88)]
+    cursor, page_count, evidence_chars, candidate_count = agent_tools._queue_context_pages(
+        state,
+        [{"source_id": "p001", "source_type": "website", "url": "https://example.fi/", "text": text}],
+        candidates,
+    )
+
+    delivered_text = ""
+    delivered_candidates = []
+    response_count = 0
+    while cursor:
+        response = await state.handlers["read_context_page"]({"cursor": cursor})
+        assert response["is_error"] is False
+        assert len(response["content"][0]["text"]) <= agent_tools.MAX_MCP_RESPONSE_CHARS
+        payload = json.loads(response["content"][0]["text"])
+        delivered_text += "".join(item["text"] for item in payload["evidence"])
+        delivered_candidates.extend(payload["candidate_links"])
+        cursor = payload["next_cursor"]
+        response_count += 1
+
+    assert response_count == page_count
+    assert evidence_chars == len(text)
+    assert candidate_count == 87
+    assert delivered_text == text
+    assert len(delivered_candidates) == 87
+    assert all("utm_source" not in candidate["url"] for candidate in delivered_candidates)
+    assert state.pending_context_cursors == []
+    delivery = json.loads((workspace / "work" / "context-delivery.json").read_text(encoding="utf-8"))
+    assert delivery["complete"] is True
+    assert delivery["pages_delivered"] == page_count
 
 
 def test_candidate_ranking_prefers_relevant_accommodation_links():

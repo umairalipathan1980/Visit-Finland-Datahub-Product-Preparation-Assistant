@@ -26,7 +26,7 @@ from app.progress import persist_stage_event
 from app.telemetry import RunTelemetry
 
 WALL_CLOCK_TIMEOUT_S = 600
-OPTIMIZED_TURN_CAP = 20
+OPTIMIZED_TURN_CAP = 96
 RECOVERY_TURN_CAP = 8
 
 
@@ -71,8 +71,9 @@ async def run_optimized_analysis(
             "reason": (
                 "The Visit Finland workflow is incomplete. Continue with the typed visit_finland tools. "
                 "Do not repeat load_skill or prepare_sources and do not call Read, Bash, or generic tools. "
-                "After source preparation, select returned candidate IDs with fetch_selected_pages or call "
-                "record_scope when no additional page is needed. Continue through submit_extraction and "
+                "After source preparation, read every context page in cursor order. Then select returned "
+                "candidate IDs with fetch_selected_pages or call record_scope when no additional page is needed. "
+                "After every fetch, read all newly queued context pages. Continue through submit_extraction and "
                 "finalize_outputs unless a typed tool reports a terminal outcome."
             ),
         }
@@ -94,12 +95,13 @@ async def run_optimized_analysis(
     )
     prompt = f"""Run the Visit Finland Accommodation preparation workflow for run {workspace.name}.
 
-You have one continuous session and only six task-specific tools. You have no shell or filesystem tools.
+You have one continuous session and only seven task-specific tools. You have no shell or filesystem tools.
 Call load_skill first and follow the returned SKILL.md completely, specifically its Optimized coarse-tool workflow.
-Then call prepare_sources. If relevant candidate links exist, select their IDs using semantic judgment and call
-fetch_selected_pages once; use its one optional recovery call only when an unusual site structure justifies it.
-Call prepare_sources exactly once. Its evidence bundle is complete for your context; never call Read or any other
-generic filesystem tool, even when a source is marked truncated. Follow each tool's next_action instead.
+Then call prepare_sources and follow its context cursor. Call read_context_page repeatedly, using exactly the
+returned next cursor, until context_complete is true. Only then may you select relevant candidate link IDs and
+call fetch_selected_pages once; use its one optional recovery call only when an unusual site structure justifies
+it. After each fetch, read every newly queued context page before making another decision. Call prepare_sources
+exactly once. Never call Read or any generic filesystem tool. Follow each tool's next_action instead.
 Determine and record product scope. Whether scope is resolved or ambiguous, submit a complete extraction. For
 ambiguous scope, never merge candidate products; mark scope-dependent fields review or missing and preserve the
 alternatives and reasoning. Repair the extraction at most once when the deterministic validator permits repair,
@@ -174,12 +176,14 @@ If a tool reports a terminal outcome, stop. Never invent link IDs, source IDs, f
 Continue the same run from its current deterministic state:
 - prepared: {state.prepared}
 - expansion calls used: {state.expansion_calls}
+- unread context pages: {len(getattr(state, 'pending_context_cursors', []))}
 - scope status: {state.scope_status}
 - extraction submissions: {state.extraction_submissions}
 
 Do not call load_skill or prepare_sources again. Do not call Read, Bash, or any generic tool.
-Use only the six visit_finland tools already available and follow their next_action fields.
-If candidate link IDs were returned, select relevant IDs and call fetch_selected_pages; otherwise call record_scope.
+Use only the seven visit_finland tools already available and follow their next_action fields.
+If context pages remain, call read_context_page with the returned cursor until complete. If candidate link IDs
+were returned, select relevant IDs and call fetch_selected_pages; otherwise call record_scope.
 Continue through extraction, validation, and finalize_outputs unless a typed tool reports a terminal outcome.
 """
             recovery_options = replace(
@@ -223,6 +227,9 @@ Continue through extraction, validation, and finalize_outputs unless a typed too
     telemetry_snapshot["terminal_status"] = outcome["status"]
     telemetry_snapshot["terminal_error_code"] = outcome.get("error_code")
     telemetry_snapshot["evidence_chars_returned"] = state.evidence_chars_returned
+    telemetry_snapshot["context_chars_queued"] = getattr(state, "context_chars_queued", 0)
+    telemetry_snapshot["context_pages_queued"] = len(getattr(state, "context_pages", {}))
+    telemetry_snapshot["context_pages_delivered"] = len(getattr(state, "delivered_context_cursors", set()))
     manifest_path = workspace / "output" / "run-manifest.json"
     if manifest_path.is_file():
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))

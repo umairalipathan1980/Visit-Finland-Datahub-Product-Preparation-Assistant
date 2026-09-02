@@ -5,7 +5,7 @@ description: Prepare Visit Finland DataHub Accommodation records from company we
 
 # Visit Finland DataHub Accommodation Skill
 
-Run once, unattended, using only the six task-specific tools. Do not attempt
+Run once, unattended, using only the seven task-specific tools. Do not attempt
 shell, browser, general filesystem, web-search, or generic editing operations.
 Stop with a defined status instead of asking the user a question.
 
@@ -14,12 +14,16 @@ Stop with a defined status instead of asking the user a question.
 1. Call `load_skill` first. Treat the returned schemas, taxonomy, references,
    and this complete Skill as the authoritative policy bundle.
 2. Call `prepare_sources`. It validates the request, parses optional
-   documents, retrieves seed pages, and returns stored evidence plus opaque
-   same-site candidate-link IDs. Stop if it reports a terminal status.
-3. Select candidate IDs likely to contain Accommodation product, room,
+   documents, retrieves seed pages, and prepares lossless paginated context.
+   Stop if it reports a terminal status.
+3. Call `read_context_page` with each returned cursor in exact order until
+   `context_complete` is true. Treat the combined pages as one evidence bundle;
+   do not determine scope or extract while any context cursor remains. Then
+   select candidate IDs likely to contain Accommodation product, room,
    contact, location, booking terms, accessibility, sustainability, or
    language-variant facts. Call `fetch_selected_pages` once. Use its optional
-   second call only for a justified unusual-site recovery pass.
+   second call only for a justified unusual-site recovery pass. After every
+   fetch, read every newly queued context page before continuing.
 4. Determine product scope from stored evidence and call `record_scope`.
    If scope is ambiguous, continue with a conservative extraction: never merge
    candidate products, and mark scope-dependent fields `review` or `missing`.
@@ -54,6 +58,9 @@ You make semantic decisions and pass typed data only.
     affected fields out of `found` status.
 11. Never retrieve from a domain the caller did not supply. An external link
     can be extracted only as literal text stored on an approved page.
+12. Pagination is transport-only. Read every context page in order and treat
+    their combined exact content as the complete evidence bundle. Never treat
+    one page as a complete source or begin extraction while a cursor remains.
 
 ## Source selection and evidence
 

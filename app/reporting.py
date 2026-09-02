@@ -59,6 +59,7 @@ def with_deterministic_appendix(
     parsed = _read_json(workspace / "work" / "parsed-documents.json", {"documents": []})
     candidates = _read_json(workspace / "work" / "link-candidates.json", {"links": [], "omitted_count": 0})
     scope_decision = _read_json(workspace / "work" / "scope-decision.json", {})
+    context_delivery = _read_json(workspace / "work" / "context-delivery.json", {})
     document_limitations = [
         {"source_id": doc.get("id"), "status": doc.get("status"), "ocr_required": doc.get("ocr_required", False)}
         for doc in parsed.get("documents", [])
@@ -117,6 +118,8 @@ def with_deterministic_appendix(
         f"- Candidate links indexed: {len(candidates.get('links', []))}",
         f"- Candidate links omitted from the agent inventory: {candidates.get('omitted_count', 0)}",
         f"- Evidence-bundle truncation/omission events: {len(bundle_limitations)}",
+        f"- Context pages delivered: {context_delivery.get('pages_delivered', 0)} of {context_delivery.get('pages_queued', 0)}",
+        f"- Complete context delivered before extraction: {context_delivery.get('complete', False)}",
         f"- Validation errors: {len(validation.get('errors', []))}",
         f"- Validation warnings: {len(validation.get('warnings', []))}",
         "",

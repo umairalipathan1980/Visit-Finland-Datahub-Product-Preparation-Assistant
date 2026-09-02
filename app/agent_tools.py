@@ -16,6 +16,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Annotated, Any, Literal
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from claude_agent_sdk import create_sdk_mcp_server, tool
 import jsonschema
@@ -27,14 +28,17 @@ from app.reporting import with_deterministic_appendix
 
 SERVER_NAME = "visit_finland"
 TOOL_PREFIX = f"mcp__{SERVER_NAME}__"
-MAX_CANDIDATE_LINKS = 100
 MAX_SELECTED_PER_CALL = 20
 MAX_RECOVERY_SELECTED = 5
 MAX_SELECTED_PER_RUN = 25
 MAX_EXPANSION_CALLS = 2
-MAX_EVIDENCE_CHARS = 80_000
-MAX_CHARS_PER_SOURCE = 20_000
 MAX_TOTAL_PAGES = 25
+MAX_CONTEXT_PAGE_CHARS = 48_000
+MAX_MCP_RESPONSE_CHARS = 52_000
+MAX_EVIDENCE_CHUNK_CHARS = 44_000
+MAX_TOTAL_CONTEXT_CHARS = 2_400_000
+MAX_CANDIDATE_URL_CHARS = 2_000
+MAX_CANDIDATE_TEXT_CHARS = 1_000
 CANDIDATE_KEYWORDS = (
     "accommodation", "hotel", "room", "contact", "location", "booking", "terms",
     "accessibility", "sustainability", "majoitus", "hotelli", "huone", "yhteys",
@@ -44,6 +48,7 @@ CANDIDATE_KEYWORDS = (
 TOOL_NAMES = [
     "load_skill",
     "prepare_sources",
+    "read_context_page",
     "fetch_selected_pages",
     "record_scope",
     "submit_extraction",
@@ -65,6 +70,10 @@ class FetchSelectedPagesInput(_StrictToolInput):
         min_length=1, max_length=MAX_SELECTED_PER_CALL,
     )
     reason: str = Field(min_length=1, max_length=500)
+
+
+class ReadContextPageInput(_StrictToolInput):
+    cursor: Annotated[str, Field(pattern=r"^ctx[0-9]{4,}$")]
 
 
 class ScopeProduct(_StrictToolInput):
@@ -125,6 +134,12 @@ class OptimizedToolState:
     active_tools: set[str] = field(default_factory=set)
     artifact_hashes: dict[str, str] = field(default_factory=dict)
     evidence_chars_returned: int = 0
+    context_pages: dict[str, dict[str, Any]] = field(default_factory=dict)
+    pending_context_cursors: list[str] = field(default_factory=list)
+    delivered_context_cursors: set[str] = field(default_factory=set)
+    next_context_page_index: int = 1
+    queued_candidate_ids: set[str] = field(default_factory=set)
+    context_chars_queued: int = 0
 
 
 def _mark_scope_reasoning_started(state: OptimizedToolState) -> None:
@@ -278,40 +293,163 @@ def _document_records(workspace: Path) -> list[dict[str, Any]]:
     return records
 
 
-def _bounded_evidence(
-    records: list[dict[str, Any]], max_chars: int = MAX_EVIDENCE_CHARS,
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    remaining = max(0, max_chars)
-    included: list[dict[str, Any]] = []
-    limitations: list[dict[str, Any]] = []
+TRACKING_QUERY_KEYS = {
+    "fbclid", "gclid", "gbraid", "wbraid", "gad_source", "mc_cid", "mc_eid",
+}
+
+
+def _display_url(value: Any) -> str | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        parts = urlsplit(value)
+        query = [
+            (key, item)
+            for key, item in parse_qsl(parts.query, keep_blank_values=True)
+            if not key.lower().startswith("utm_") and key.lower() not in TRACKING_QUERY_KEYS
+        ]
+        cleaned = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query, doseq=True), ""))
+    except ValueError:
+        cleaned = value
+    if len(cleaned) <= MAX_CANDIDATE_URL_CHARS:
+        return cleaned
+    return cleaned[: MAX_CANDIDATE_URL_CHARS - 3] + "..."
+
+
+def _compact_candidate(candidate: dict[str, Any]) -> dict[str, Any]:
+    compact = {
+        "id": candidate.get("id"),
+        "url": _display_url(candidate.get("url")),
+        "anchor_text": str(candidate.get("anchor_text") or "")[:MAX_CANDIDATE_TEXT_CHARS],
+        "discovered_on": candidate.get("discovered_on"),
+    }
+    surrounding = str(candidate.get("surrounding_text") or "")
+    if surrounding:
+        compact["surrounding_text"] = surrounding[:MAX_CANDIDATE_TEXT_CHARS]
+    return compact
+
+
+def _compact_metadata(value: Any, max_chars: int) -> str | None:
+    if value is None:
+        return None
+    return str(value)[:max_chars]
+
+
+def _split_text_losslessly(text: str, max_chars: int = MAX_EVIDENCE_CHUNK_CHARS):
+    start = 0
+    while start < len(text):
+        hard_end = min(len(text), start + max_chars)
+        end = hard_end
+        if hard_end < len(text):
+            minimum = start + max_chars // 2
+            for separator in ("\n\n", "\n", " "):
+                boundary = text.rfind(separator, minimum, hard_end)
+                if boundary >= minimum:
+                    end = boundary + len(separator)
+                    break
+        yield start, end, text[start:end]
+        start = end
+
+
+def _evidence_context_items(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
     for record in records:
-        item = dict(record)
-        text = str(item.get("text", ""))
-        if remaining <= 0:
-            limitations.append({"source_id": item.get("source_id"), "reason": "evidence_budget_exhausted"})
+        text = str(record.get("text") or "")
+        if not text:
             continue
-        allowed = min(remaining, MAX_CHARS_PER_SOURCE)
-        if len(text) > allowed:
-            item["text"] = text[:allowed]
-            item["truncated"] = True
-            limitations.append({
-                "source_id": item.get("source_id"),
-                "reason": "per_source_limit" if allowed == MAX_CHARS_PER_SOURCE else "evidence_budget_exhausted",
-                "original_chars": len(text),
-                "included_chars": allowed,
+        source_id = record.get("source_id")
+        metadata = {
+            "source_id": source_id,
+            "source_type": record.get("source_type"),
+        }
+        if record.get("source_type") == "website":
+            metadata.update({
+                "url": _display_url(record.get("final_url") or record.get("url")),
+                "title": _compact_metadata(record.get("title"), 500),
+                "language_hint": _compact_metadata(record.get("language_hint"), 40),
             })
-        remaining -= min(len(text), allowed)
-        included.append(item)
-    return included, limitations
+        else:
+            metadata.update({
+                "file_name": _compact_metadata(record.get("file_name"), 260),
+                "parsing_method": _compact_metadata(record.get("parsing_method"), 100),
+            })
+        chunks = list(_split_text_losslessly(text))
+        for index, (start, end, chunk) in enumerate(chunks, start=1):
+            items.append({
+                **metadata,
+                "chunk_id": f"{source_id}-c{index:04d}",
+                "locator": f"characters {start + 1}-{end}",
+                "text": chunk,
+            })
+    return items
 
 
-def _take_evidence_budget(
-    state: OptimizedToolState, records: list[dict[str, Any]],
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    remaining = MAX_EVIDENCE_CHARS - state.evidence_chars_returned
-    included, limitations = _bounded_evidence(records, remaining)
-    state.evidence_chars_returned += sum(len(str(record.get("text", ""))) for record in included)
-    return included, limitations
+def _queue_context_pages(
+    state: OptimizedToolState,
+    records: list[dict[str, Any]],
+    candidates: list[dict[str, Any]],
+) -> tuple[str | None, int, int, int]:
+    evidence_items = _evidence_context_items(records)
+    candidate_items = [
+        _compact_candidate(candidate)
+        for candidate in candidates
+        if candidate.get("id") not in state.queued_candidate_ids
+    ]
+    pages: list[dict[str, Any]] = []
+    current: dict[str, Any] = {"evidence": [], "candidate_links": []}
+
+    def serialized_chars(page: dict[str, Any]) -> int:
+        return len(json.dumps(page, ensure_ascii=False, separators=(",", ":")))
+
+    def append_item(kind: str, item: dict[str, Any]) -> None:
+        nonlocal current
+        candidate_page = copy.deepcopy(current)
+        candidate_page[kind].append(item)
+        if (current["evidence"] or current["candidate_links"]) and serialized_chars(candidate_page) > MAX_CONTEXT_PAGE_CHARS:
+            pages.append(current)
+            current = {"evidence": [], "candidate_links": []}
+            candidate_page = copy.deepcopy(current)
+            candidate_page[kind].append(item)
+        if serialized_chars(candidate_page) > MAX_CONTEXT_PAGE_CHARS:
+            raise ValueError("context_item_exceeds_page_budget")
+        current = candidate_page
+
+    for item in evidence_items:
+        append_item("evidence", item)
+    for item in candidate_items:
+        append_item("candidate_links", item)
+    if current["evidence"] or current["candidate_links"]:
+        pages.append(current)
+
+    queued_chars = sum(serialized_chars(page) for page in pages)
+    if state.context_chars_queued + queued_chars > MAX_TOTAL_CONTEXT_CHARS:
+        raise ValueError("model_context_budget_exceeded")
+
+    cursors = [f"ctx{state.next_context_page_index + index:04d}" for index in range(len(pages))]
+    state.next_context_page_index += len(pages)
+    for index, (cursor, page) in enumerate(zip(cursors, pages)):
+        page["cursor"] = cursor
+        page["next_cursor"] = cursors[index + 1] if index + 1 < len(cursors) else None
+        state.context_pages[cursor] = page
+        state.pending_context_cursors.append(cursor)
+    state.queued_candidate_ids.update(
+        candidate.get("id") for candidate in candidate_items if candidate.get("id")
+    )
+    state.context_chars_queued += queued_chars
+    evidence_chars = sum(len(item["text"]) for item in evidence_items)
+    _persist_context_delivery(state)
+    return (cursors[0] if cursors else None), len(cursors), evidence_chars, len(candidate_items)
+
+
+def _persist_context_delivery(state: OptimizedToolState) -> None:
+    _write_json_atomic(state.workspace / "work" / "context-delivery.json", {
+        "pages_queued": len(state.context_pages),
+        "pages_delivered": len(state.delivered_context_cursors),
+        "pages_remaining": len(state.pending_context_cursors),
+        "context_chars_queued": state.context_chars_queued,
+        "evidence_chars_delivered": state.evidence_chars_returned,
+        "complete": not state.pending_context_cursors,
+    })
 
 
 def _candidate_score(entry: dict[str, Any]) -> int:
@@ -348,11 +486,11 @@ def _candidate_entries(workspace: Path) -> list[dict[str, Any]]:
             next_index += 1
 
     entries = sorted(by_url.values(), key=lambda e: e["id"])
-    visible = sorted(entries, key=lambda e: (-_candidate_score(e), e["id"]))[:MAX_CANDIDATE_LINKS]
+    visible = sorted(entries, key=lambda e: (-_candidate_score(e), e["id"]))
     _write_json_atomic(workspace / "work" / "link-candidates.json", {
         "links": entries,
         "visible_count": len(visible),
-        "omitted_count": max(0, len(entries) - len(visible)),
+        "omitted_count": 0,
     })
     return visible
 
@@ -418,7 +556,7 @@ def build_optimized_tool_server(
             state.forced_status, state.forced_error_code = "execution_failed", "skill_load_failed"
             return _json_result({"status": "error", "error_code": "skill_load_failed", "message": type(exc).__name__}, is_error=True)
 
-    @tool("prepare_sources", "Validate the request, parse optional documents, fetch seed pages, and return one evidence/candidate bundle. Call after load_skill.",
+    @tool("prepare_sources", "Validate the request, parse optional documents, fetch seed pages, and prepare lossless paginated context. Call after load_skill.",
           EmptyToolInput.model_json_schema())
     async def prepare_sources(_args: dict[str, Any]):
         _parsed, invalid = _validated(EmptyToolInput, _args)
@@ -433,13 +571,15 @@ def build_optimized_tool_server(
                 "idempotent": True,
                 "summary": _source_summary(state.workspace),
                 "candidate_count": len(candidates),
-                "message": "Sources are already prepared. No new evidence is returned by repeating this tool.",
+                "context_complete": not state.pending_context_cursors,
+                "next_context_cursor": state.pending_context_cursors[0] if state.pending_context_cursors else None,
+                "message": "Sources are already prepared. Continue from the existing context cursor.",
                 "next_action": {
-                    "tool": "fetch_selected_pages" if candidates else "record_scope",
+                    "tool": "read_context_page" if state.pending_context_cursors else "fetch_selected_pages_or_record_scope",
                     "instruction": (
-                        "Use the candidate IDs already returned; do not call prepare_sources or generic file tools again."
-                        if candidates else
-                        "Determine scope from the evidence already returned and call record_scope; do not use generic file tools."
+                        "Read every remaining context page in order. Do not call prepare_sources again."
+                        if state.pending_context_cursors else
+                        "All prepared context was delivered. Fetch relevant candidates or determine scope."
                     ),
                 },
             })
@@ -491,40 +631,118 @@ def build_optimized_tool_server(
             return _json_result({"status": "error", "error_code": "fetcher_error"}, is_error=True)
 
         state.prepared = True
-        records, limits = _take_evidence_budget(
-            state, _page_records(state.workspace) + _document_records(state.workspace),
-        )
-        fetch_op["evidence_chars_returned"] = sum(len(str(record.get("text", ""))) for record in records)
-        state.bundle_limitations.extend(limits)
+        records = [
+            record for record in (_page_records(state.workspace) + _document_records(state.workspace))
+            if str(record.get("text") or "")
+        ]
         candidates = _candidate_entries(state.workspace)
         summary = _source_summary(state.workspace)
         if not records:
             state.forced_status = "no_usable_sources"
             state.forced_error_code = "documents_require_ocr" if any(d.get("ocr_required") for d in summary["documents"]) else "all_pages_inaccessible"
-        elif not candidates:
-            _mark_scope_reasoning_started(state)
+            return _json_result({
+                "status": state.forced_status,
+                "error_code": state.forced_error_code,
+                "summary": summary,
+                "terminal": True,
+            })
+        try:
+            first_cursor, context_page_count, evidence_chars, queued_candidates = _queue_context_pages(state, records, candidates)
+        except ValueError as exc:
+            state.forced_status, state.forced_error_code = "execution_failed", str(exc)
+            return _json_result({
+                "status": "error", "error_code": str(exc),
+                "message": "The complete evidence cannot fit safely in the configured model context budget.",
+            }, is_error=True)
+        fetch_op["evidence_chars_queued"] = evidence_chars
         return _json_result({
-            "status": "ok" if records else "no_usable_sources",
+            "status": "ok",
             "summary": summary,
-            "evidence": records,
-            "candidate_links": candidates,
-            "candidate_limit": MAX_CANDIDATE_LINKS,
-            "limitations": limits,
+            "evidence_chars": evidence_chars,
+            "candidate_count": queued_candidates,
+            "context_page_count": context_page_count,
+            "next_context_cursor": first_cursor,
+            "context_complete": context_page_count == 0,
+            "limitations": [],
             "capabilities": {
                 "static_html": True, "javascript_rendering": False, "general_web_search": False,
                 "documents": ["pdf", "docx"], "retrieval_scope": "caller-approved domains only",
             },
             "next_action": {
-                "tool": "fetch_selected_pages" if candidates else "record_scope",
-                "instruction": (
-                    "Select relevant candidate link_ids and call fetch_selected_pages. "
-                    "Do not repeat prepare_sources or call generic file tools."
-                    if candidates else
-                    "Determine scope from this evidence and call record_scope. "
-                    "Do not repeat prepare_sources or call generic file tools."
-                ),
+                "tool": "read_context_page",
+                "cursor": first_cursor,
+                "instruction": "Read every context page in order until context_complete is true. Then fetch relevant candidate IDs or record scope.",
             },
         })
+
+    @tool("read_context_page", "Read the next exact, lossless page of prepared website/document evidence and candidate links. Read every page in cursor order before fetching more pages or recording scope.",
+          ReadContextPageInput.model_json_schema())
+    @_idempotent_handler(state, "read_context_page")
+    async def read_context_page(args: dict[str, Any]):
+        parsed, invalid = _validated(ReadContextPageInput, args)
+        if invalid:
+            return invalid
+        if state.forced_status is not None:
+            return _json_result({
+                "status": state.forced_status,
+                "error_code": state.forced_error_code,
+                "terminal": True,
+            })
+        if not state.prepared:
+            return _json_result({"status": "error", "error_code": "sources_not_prepared"}, is_error=True)
+        cursor = parsed["cursor"]
+        if cursor not in state.context_pages:
+            return _json_result({"status": "error", "error_code": "unknown_context_cursor"}, is_error=True)
+        expected = state.pending_context_cursors[0] if state.pending_context_cursors else None
+        if cursor != expected:
+            return _json_result({
+                "status": "error",
+                "error_code": "context_cursor_out_of_order",
+                "expected_cursor": expected,
+            }, is_error=True)
+
+        page = state.context_pages[cursor]
+        evidence_chars = sum(len(str(item.get("text", ""))) for item in page["evidence"])
+        context_complete = len(state.pending_context_cursors) == 1
+        payload = {
+            "status": "ok",
+            "cursor": cursor,
+            "evidence": page["evidence"],
+            "candidate_links": page["candidate_links"],
+            "next_cursor": page["next_cursor"],
+            "context_complete": context_complete,
+            "remaining_context_pages": len(state.pending_context_cursors) - 1,
+            "next_action": {
+                "tool": "read_context_page" if not context_complete else "fetch_selected_pages_or_record_scope",
+                "cursor": page["next_cursor"],
+                "instruction": (
+                    "Read the next context page before any scope or extraction decision."
+                    if not context_complete else
+                    "All currently prepared evidence and candidates have been delivered. Fetch relevant candidate IDs if needed; otherwise record scope."
+                ),
+            },
+        }
+        response = _json_result(payload)
+        if len(response["content"][0]["text"]) > MAX_MCP_RESPONSE_CHARS:
+            state.forced_status, state.forced_error_code = "execution_failed", "pagination_response_too_large"
+            return _json_result({
+                "status": "error",
+                "error_code": "pagination_response_too_large",
+            }, is_error=True)
+
+        op = telemetry.start_operation("read_context_page", "stage_3", cursor=cursor)
+        state.pending_context_cursors.pop(0)
+        state.delivered_context_cursors.add(cursor)
+        state.evidence_chars_returned += evidence_chars
+        _persist_context_delivery(state)
+        telemetry.finish_operation(
+            op,
+            evidence_chunks=len(page["evidence"]),
+            evidence_chars_returned=evidence_chars,
+            candidate_links=len(page["candidate_links"]),
+            context_complete=context_complete,
+        )
+        return response
 
     @tool("fetch_selected_pages", "Fetch relevant same-site pages by candidate link ID. Use semantic judgment; never invent IDs. At most two bounded calls are allowed.",
           FetchSelectedPagesInput.model_json_schema())
@@ -542,6 +760,12 @@ def build_optimized_tool_server(
             })
         if not state.prepared:
             return _json_result({"status": "error", "error_code": "sources_not_prepared"}, is_error=True)
+        if state.pending_context_cursors:
+            return _json_result({
+                "status": "error",
+                "error_code": "context_not_fully_delivered",
+                "next_context_cursor": state.pending_context_cursors[0],
+            }, is_error=True)
         if state.expansion_calls >= MAX_EXPANSION_CALLS:
             return _json_result({"status": "error", "error_code": "expansion_call_limit_reached"}, is_error=True)
         requested_ids = list(dict.fromkeys(args.get("link_ids", [])))
@@ -579,29 +803,41 @@ def build_optimized_tool_server(
 
         after_records = _page_records(state.workspace)
         new_ids = {p["source_id"] for p in after_records} - before_ids
-        records, limits = _take_evidence_budget(
-            state, [p for p in after_records if p["source_id"] in new_ids],
-        )
-        op["evidence_chars_returned"] = sum(len(str(record.get("text", ""))) for record in records)
-        state.bundle_limitations.extend(limits)
+        records = [p for p in after_records if p["source_id"] in new_ids]
         next_candidates = _candidate_entries(state.workspace)
         unseen_candidates = [c for c in next_candidates if c["id"] not in state.selected_link_ids]
-        _mark_scope_reasoning_started(state)
+        try:
+            first_cursor, context_page_count, evidence_chars, queued_candidates = _queue_context_pages(
+                state, records, unseen_candidates,
+            )
+        except ValueError as exc:
+            state.forced_status, state.forced_error_code = "execution_failed", str(exc)
+            return _json_result({
+                "status": "error", "error_code": str(exc),
+                "message": "The complete evidence cannot fit safely in the configured model context budget.",
+            }, is_error=True)
+        op["evidence_chars_queued"] = evidence_chars
         return _json_result({
-            "status": "ok", "fetch_result": fetching.get("result"), "evidence": records,
-            "additional_candidate_links": unseen_candidates,
+            "status": "ok", "fetch_result": fetching.get("result"),
+            "new_evidence_chars": evidence_chars,
+            "additional_candidate_count": queued_candidates,
+            "context_page_count": context_page_count,
+            "next_context_cursor": first_cursor,
+            "context_complete": context_page_count == 0,
             "remaining": {
                 "expansion_calls": MAX_EXPANSION_CALLS - state.expansion_calls,
                 "selected_pages": MAX_SELECTED_PER_RUN - len(state.selected_link_ids),
                 "next_call_pages": MAX_RECOVERY_SELECTED if state.expansion_calls == 1 else 0,
             },
-            "limitations": limits,
+            "limitations": [],
             "next_action": {
-                "tool": "record_scope",
+                "tool": "read_context_page" if first_cursor else "record_scope",
+                "cursor": first_cursor,
                 "instruction": (
-                    "Determine and record product scope from the evidence already returned. "
-                    "Use a recovery fetch only if these results reveal a specific essential missing page. "
-                    "Never call prepare_sources or generic file tools."
+                    "Read every newly prepared context page in order before determining scope. "
+                    "Use a recovery fetch only after all pages are read and only if they reveal a specific essential missing page."
+                    if first_cursor else
+                    "No new context was produced. Determine and record scope from the context already delivered."
                 ),
             },
         })
@@ -622,6 +858,13 @@ def build_optimized_tool_server(
         args = parsed
         if not state.prepared:
             return _json_result({"status": "error", "error_code": "sources_not_prepared"}, is_error=True)
+        if state.pending_context_cursors:
+            return _json_result({
+                "status": "error",
+                "error_code": "context_not_fully_delivered",
+                "next_context_cursor": state.pending_context_cursors[0],
+            }, is_error=True)
+        _mark_scope_reasoning_started(state)
         decision = args.get("scope_decision")
         if not isinstance(decision, dict) or decision.get("status") not in {"resolved", "scope_ambiguous"}:
             return _json_result({"status": "error", "error_code": "invalid_scope_status"}, is_error=True)
@@ -668,6 +911,12 @@ def build_optimized_tool_server(
         if invalid:
             return invalid
         args = parsed
+        if state.pending_context_cursors:
+            return _json_result({
+                "status": "error",
+                "error_code": "context_not_fully_delivered",
+                "next_context_cursor": state.pending_context_cursors[0],
+            }, is_error=True)
         if state.scope_status not in {"resolved", "scope_ambiguous"}:
             return _json_result({"status": "error", "error_code": "scope_not_resolved"}, is_error=True)
         if state.extraction_submissions >= 2:
@@ -805,11 +1054,12 @@ def build_optimized_tool_server(
     server = create_sdk_mcp_server(
         name=SERVER_NAME,
         version="1.0.0",
-        tools=[load_skill, prepare_sources, fetch_selected_pages, record_scope, submit_extraction, finalize_outputs],
+        tools=[load_skill, prepare_sources, read_context_page, fetch_selected_pages, record_scope, submit_extraction, finalize_outputs],
     )
     state.handlers = {
         "load_skill": load_skill.handler,
         "prepare_sources": prepare_sources.handler,
+        "read_context_page": read_context_page.handler,
         "fetch_selected_pages": fetch_selected_pages.handler,
         "record_scope": record_scope.handler,
         "submit_extraction": submit_extraction.handler,

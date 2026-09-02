@@ -73,14 +73,19 @@ async def test_complete_coarse_tool_sequence_uses_empty_document_fast_path(works
     assert _payload(await state.handlers["load_skill"]({}))["status"] == "ok"
     prepared = _payload(await state.handlers["prepare_sources"]({}))
     assert prepared["status"] == "ok"
-    assert prepared["candidate_links"][0]["id"] == "l001"
-    assert prepared["next_action"]["tool"] == "fetch_selected_pages"
+    assert prepared["candidate_count"] == 1
+    assert prepared["next_action"]["tool"] == "read_context_page"
     assert "parse_documents.py" not in calls
     assert json.loads((workspace / "work" / "parsed-documents.json").read_text(encoding="utf-8")) == {"documents": []}
 
+    context = _payload(await state.handlers["read_context_page"]({"cursor": prepared["next_context_cursor"]}))
+    assert context["candidate_links"][0]["id"] == "l001"
+    assert context["evidence"][0]["text"] == "Example Hotel has 12 rooms in Helsinki and offers a sauna."
+    assert context["context_complete"] is True
+
     repeated_prepare = _payload(await state.handlers["prepare_sources"]({}))
     assert repeated_prepare["idempotent"] is True
-    assert repeated_prepare["next_action"]["tool"] == "fetch_selected_pages"
+    assert repeated_prepare["next_action"]["tool"] == "fetch_selected_pages_or_record_scope"
     assert "evidence" not in repeated_prepare
     assert calls.count("fetch_pages_optimized.py") == 1
 

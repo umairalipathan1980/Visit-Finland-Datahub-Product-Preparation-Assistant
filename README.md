@@ -6,7 +6,7 @@ PDF/DOCX documents. It produces reviewable JSON, Excel, and Markdown artifacts;
 it does not submit data to Visit Finland DataHub.
 
 The application has one workflow: a continuous Claude Agent SDK session with
-six typed tools. Claude makes semantic decisions such as link selection,
+seven typed tools. Claude makes semantic decisions such as link selection,
 product scope, extraction, conflict handling, repair, and report prose.
 Deterministic Python code owns retrieval boundaries, file paths, validation,
 artifact generation, and execution budgets.
@@ -23,7 +23,7 @@ FastAPI service (port 8010)
         v
 Claude Agent SDK runner
         |
-        | six typed in-process tools
+        | seven typed in-process tools
         v
 Stored evidence + deterministic validation
         |
@@ -31,8 +31,8 @@ Stored evidence + deterministic validation
 JSON + canonical JSON + Excel + review report
 ```
 
-The six agent tools are `load_skill`, `prepare_sources`,
-`fetch_selected_pages`, `record_scope`, `submit_extraction`, and
+The seven agent tools are `load_skill`, `prepare_sources`,
+`read_context_page`, `fetch_selected_pages`, `record_scope`, `submit_extraction`, and
 `finalize_outputs`. Generic shell, filesystem, search, and web-fetch tools
 are unavailable to the agent.
 
@@ -54,15 +54,21 @@ Important components:
 ## Workflow and limits
 
 The runner loads the Skill, validates inputs, parses documents, retrieves seed
-pages, exposes ranked same-site link candidates, records one product-scope
-decision, validates a complete extraction with at most one repair, and
-finalizes the artifact set.
+pages, and exposes the complete evidence and ranked same-site link inventory
+through sequential context pages. Scope and extraction are blocked until all
+currently queued pages have been delivered. The runner then records one
+product-scope decision, validates a complete extraction with at most one
+repair, and finalizes the artifact set.
 
-Current limits are 10 seed URLs, 100 candidate links exposed to the agent, 20
-selected links on the primary retrieval call, five on the recovery call, 25
-selected links and 25 stored pages per run, two expansion calls, five
-concurrent requests, 15 seconds per request, 60 seconds per retrieval stage,
-5 MiB per page, and 80,000 evidence characters returned per tool session.
+Current limits are 10 seed URLs, 20 selected links on the primary retrieval
+call, five on the recovery call, 25 selected links and 25 stored pages per run,
+two expansion calls, five concurrent requests, 15 seconds per request, 60
+seconds per retrieval stage, and 5 MiB per fetched page. Parsed evidence is
+split losslessly into chunks of at most 44,000 characters and packed into
+context pages below a 52,000-character serialized-response guard. Up to
+2,400,000 serialized context characters may be queued per run; a larger input
+fails explicitly instead of being silently truncated. All discovered
+candidate links are available through the same pagination mechanism.
 Uploads are limited to 10 PDF/DOCX files, 20 MiB each, and 50 MiB total.
 
 Retrieval is static HTTP only. It does not execute JavaScript, access
@@ -79,6 +85,7 @@ runs/<run-id>/
 |   |-- source-manifest.json
 |   |-- parsed-documents.json
 |   |-- fetched-pages.json
+|   |-- context-delivery.json
 |   |-- pages/
 |   |-- scope-decision.json
 |   |-- extraction-draft.json

@@ -1,4 +1,9 @@
 ﻿claude-agent-sdk==0.2.93
+# claude-agent-sdk does not bound its `mcp` dependency, and mcp 2.x dropped
+# Server.list_tools, which create_sdk_mcp_server() still decorates with. A clean
+# install therefore fails at run time with
+# AttributeError: 'Server' object has no attribute 'list_tools'.
+mcp>=1.29.1,<2
 python-dotenv==1.2.1
 fastapi==0.123.4
 uvicorn==0.38.0

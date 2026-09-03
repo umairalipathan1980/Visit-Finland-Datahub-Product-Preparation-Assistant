@@ -167,6 +167,12 @@ app.add_middleware(
 )
 
 
+@app.get("/health")
+async def health() -> dict:
+    """Unauthenticated liveness/readiness probe target for container platforms."""
+    return {"status": "ok"}
+
+
 def _workspace_for(run_id: str) -> Path:
     # run_id is used only to join a path under WORKSPACE_BASE and is checked
     # for traversal before that join -- see the resolve()/relative_to() guard
@@ -352,7 +358,21 @@ async def stream_events(run_id: str):
         finally:
             _EVENT_SUBSCRIBERS.get(run_id, []).remove(queue)
 
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            # A reverse proxy that gzips this stream also buffers it, so the
+            # browser's EventSource receives nothing until the run ends and the
+            # UI sits on "Working on it" for the whole run. `no-transform` tells
+            # any intermediary not to re-encode the body; `X-Accel-Buffering`
+            # covers nginx, which buffers proxied responses even uncompressed.
+            # curl does not request gzip by default, so this only reproduces in
+            # a browser.
+            "Cache-Control": "no-cache, no-transform",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @app.post("/runs/{run_id}/cancel")

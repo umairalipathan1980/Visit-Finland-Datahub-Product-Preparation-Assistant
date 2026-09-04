@@ -8,7 +8,7 @@ import { ScopeAmbiguousCard } from "@/components/shared/scope-ambiguous-card";
 import { ScopeReviewCard } from "@/components/shared/scope-review-card";
 import Link from "next/link";
 import { getRun, getArtifact, getArtifactText, artifactDownloadUrl } from "@/lib/api";
-import type { RunDetail, ExtractionResult, ScopeDecision, SourceCatalog, SourceReference } from "@/lib/api";
+import type { ApprovedProduct, RunDetail, ExtractionResult, ScopeDecision, SourceCatalog, SourceReference } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
 
@@ -41,6 +41,7 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
   const { id } = use(params);
   const [detail, setDetail] = useState<RunDetail | null>(null);
   const [result, setResult] = useState<ExtractionResult | null>(null);
+  const [approvedFields, setApprovedFields] = useState<Record<string, unknown> | null>(null);
   const [sources, setSources] = useState<SourceReference[]>([]);
   const [scopeDecision, setScopeDecision] = useState<ScopeDecision | null>(null);
   const [report, setReport] = useState<string | null>(null);
@@ -50,8 +51,16 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
     if (ignore()) return;
     setDetail(d);
     if (d.status === "completed" && d.artifacts.includes("result.json")) {
-      const r = await getArtifact<ExtractionResult>(id, "result.json");
-      if (!ignore()) setResult(r);
+      const [r, approved] = await Promise.all([
+        getArtifact<ExtractionResult>(id, "result.json"),
+        d.artifacts.includes("approved-product.json")
+          ? getArtifact<ApprovedProduct>(id, "approved-product.json")
+          : Promise.resolve(null),
+      ]);
+      if (!ignore()) {
+        setResult(r);
+        setApprovedFields(approved?.fields ?? null);
+      }
       if (d.artifacts.includes("sources.json")) {
         const catalog = await getArtifact<SourceCatalog>(id, "sources.json");
         if (!ignore()) setSources(catalog.sources);
@@ -123,7 +132,13 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
           </Button>
         </div>
         {scopeDecision?.status === "scope_ambiguous" && <ScopeReviewCard decision={scopeDecision} />}
-        <ResultReviewForm runId={id} result={result} sources={sources} />
+        <ResultReviewForm
+          key={id}
+          runId={id}
+          result={result}
+          approvedFields={approvedFields}
+          sources={sources}
+        />
       </div>
     );
   }

@@ -85,6 +85,12 @@ export interface ExtractionResult {
   validation: { valid: boolean; errors: unknown[]; warnings: unknown[] };
 }
 
+export interface ApprovedProduct {
+  run_metadata: Record<string, unknown>;
+  product_type: ProductType;
+  fields: Record<string, unknown>;
+}
+
 export interface ScopeDecision {
   status: "resolved" | "scope_ambiguous";
   error_code: string | null;

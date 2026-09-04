@@ -147,34 +147,65 @@ function normalizeArrayValues(spec: FieldSpec, values: string[]): string[] {
   return Array.from(new Set(values.map(plainTaxonomyValue)));
 }
 
-function initialState(result: ExtractionResult, fieldSpecs: FieldSpec[]): Record<string, EditableValue> {
+function approvedArrayValue(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map(String);
+  if (typeof value === "string" && value.trim()) return [value.trim()];
+  return [];
+}
+
+function initialState(
+  result: ExtractionResult,
+  fieldSpecs: FieldSpec[],
+  approvedFields: Record<string, unknown> | null,
+): Record<string, EditableValue> {
   const state: Record<string, EditableValue> = {};
+  const hasApproval = approvedFields !== null;
   for (const spec of fieldSpecs) {
     const raw = result.fields[spec.key];
+    const approvedValue = approvedFields?.[spec.key];
     if (spec.kind === "localized-text") {
-      const localized = (raw ?? {}) as Record<string, FieldEnvelope>;
-      state[spec.key] = {
-        fi: (localized.fi?.value as string) ?? "",
-        en: (localized.en?.value as string) ?? "",
-      };
+      if (hasApproval) {
+        const localized = approvedValue && typeof approvedValue === "object" && !Array.isArray(approvedValue)
+          ? approvedValue as Record<string, unknown>
+          : {};
+        state[spec.key] = {
+          fi: typeof localized.fi === "string" ? localized.fi : "",
+          en: typeof localized.en === "string" ? localized.en : "",
+        };
+      } else {
+        const localized = (raw ?? {}) as Record<string, FieldEnvelope>;
+        state[spec.key] = {
+          fi: (localized.fi?.value as string) ?? "",
+          en: (localized.en?.value as string) ?? "",
+        };
+      }
     } else if (spec.kind === "object") {
-      const env = asEnvelope(raw);
-      const value = (env.value as Record<string, unknown>) ?? {};
+      const extracted = (asEnvelope(raw).value as Record<string, unknown>) ?? {};
+      const value = hasApproval
+        ? approvedValue && typeof approvedValue === "object" && !Array.isArray(approvedValue)
+          ? approvedValue as Record<string, unknown>
+          : {}
+        : extracted;
       const obj: EditableValue = {};
-      for (const sub of spec.subfields ?? []) obj[sub.key] = value[sub.key] ?? (sub.type === "boolean" ? false : "");
+      for (const sub of spec.subfields ?? []) {
+        obj[sub.key] = value[sub.key] ?? (sub.type === "boolean" ? false : "");
+      }
       state[spec.key] = obj;
     } else if (spec.kind === "array") {
-      const env = asEnvelope(raw);
-      const values = normalizeArrayValues(spec, (env.value as string[]) ?? []);
+      const extracted = (asEnvelope(raw).value as string[]) ?? [];
+      const values = normalizeArrayValues(
+        spec,
+        hasApproval ? approvedArrayValue(approvedValue) : extracted,
+      );
       state[spec.key] = { value: spec.key === "categories" ? values : values.join(", ") };
     } else if (spec.kind === "json") {
-      const env = asEnvelope(raw);
+      const value = hasApproval ? approvedValue : asEnvelope(raw).value;
       state[spec.key] = {
-        value: env.value == null ? "" : JSON.stringify(env.value, null, 2),
+        value: value == null ? "" : JSON.stringify(value, null, 2),
       };
     } else {
-      const env = asEnvelope(raw);
-      state[spec.key] = { value: (env.value as string) ?? "" };
+      const value = hasApproval ? approvedValue : asEnvelope(raw).value;
+      state[spec.key] = { value: value == null ? "" : String(value) };
     }
   }
   return state;
@@ -406,18 +437,20 @@ function FieldEditor({
 export function ResultReviewForm({
   runId,
   result,
+  approvedFields,
   sources,
 }: {
   runId: string;
   result: ExtractionResult;
+  approvedFields: Record<string, unknown> | null;
   sources: SourceReference[];
 }) {
   const router = useRouter();
   const fieldSpecs = getFieldSpecs(result.product_type);
   const sourcesById = new Map(sources.map((source) => [source.source_id, source]));
-  const [state, setState] = useState(() => initialState(result, fieldSpecs));
+  const [state, setState] = useState(() => initialState(result, fieldSpecs, approvedFields));
   const [submitting, setSubmitting] = useState(false);
-  const [approved, setApproved] = useState(false);
+  const [approved, setApproved] = useState(approvedFields !== null);
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
   const [categoryLoading, setCategoryLoading] = useState(true);
   const [categoryError, setCategoryError] = useState<string | null>(null);

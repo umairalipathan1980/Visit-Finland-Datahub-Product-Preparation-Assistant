@@ -1,0 +1,274 @@
+{
+  "status": "completed",
+  "error_code": null,
+  "exit_code": 0,
+  "stage_reached": "stage_7",
+  "finalized_at": "2026-09-04T13:56:25.414849+00:00",
+  "skill_verification_method": "typed_load_skill",
+  "denied_tool_calls": [],
+  "artifact_hashes": {
+    "result.json": "9ab06df3a63ec5ad5d722f6702a1915d47184d7d68ac442cd4992b0d8351f308",
+    "canonical-product.json": "348b24f630f3e59afec33e48cb335c3172cee07ee3ae9741e2029da83a2ba715",
+    "result.xlsx": "88eefaa7043e45f8178798ba948a6191786f3df6421cdabcf5d9c02b2b052450",
+    "review-report.md": "3d90a5ef66a1718586e9b230b3dcf09fed9563d685c06870147c524577985fda",
+    "sources.json": "6b97fb513a9dbb5af3d23fd0dca5969b510bb6213d041ae1bbb796cba6301220",
+    "scope-decision.json": "2e319db00b9d1b6483b3d4ff65e2b5f64352af9f7c54e0955612aceaadef107d"
+  },
+  "scope_review_required": true,
+  "scope_decision": {
+    "status": "scope_ambiguous",
+    "error_code": "product_boundary_unclear",
+    "reason": "All available evidence (homepage, About Us, The Village, Floorplan & Stores, and Restaurants pages of www.helsinkioutlet.fi) describes 'Helsinki Outlet', a retail shopping outlet village on Ring Road III between Helsinki and Vantaa (address: Tatti 17, 00760 Helsinki). The site offers ~40 clothing/home/beauty/sports brand stores, an online shop, on-site restaurants (Espresso House, Pizza Hut, Villa Severino, seasonal Pingviini Ice Cream Kiosk), and a children's play area (Leo's Leikkimaa). No page in the retrieved evidence bundle (including About Us/Our Story, The Village, Floorplan & Stores, Restaurants) mentions any room, bed, overnight stay, check-in/out, or lodging offering of any kind. This business profile matches the Shops product type (closest categories: 'shopping_center', 'outlet' in the Shops taxonomy group) rather than Accommodation. Because this run's product_type is fixed as 'accommodation' and no accommodation/lodging product can be identified anywhere on the site, the product boundary for an Accommodation record cannot be resolved -- there is no candidate to select, so no 'product' value can be recorded. This is recorded as ambiguous/unresolved scope (closest available error_code) rather than a false 'resolved' Accommodation record, per the instruction to never invent product facts.",
+    "product": null,
+    "excluded": [
+      {
+        "item": "Helsinki Outlet Shopping Village (entire site, www.helsinkioutlet.fi)",
+        "reason": "Retail outlet shopping village business; matches the Shops DataHub product type, not Accommodation. No lodging/overnight-stay offering found anywhere in the retrieved evidence."
+      }
+    ],
+    "additional_products": [],
+    "out_of_type_facilities": [
+      {
+        "name": "Espresso House",
+        "type": "restaurant/cafe",
+        "source_id": "p005",
+        "note": "On-site restaurant listed on the Restaurants page; a different DataHub product type than Accommodation."
+      },
+      {
+        "name": "Pizza Hut",
+        "type": "restaurant",
+        "source_id": "p005",
+        "note": "On-site restaurant listed on the Restaurants page."
+      },
+      {
+        "name": "Villa Severino",
+        "type": "restaurant",
+        "source_id": "p005",
+        "note": "On-site restaurant listed on the Restaurants page."
+      },
+      {
+        "name": "Pingviini Ice Cream Kiosk",
+        "type": "restaurant (seasonal)",
+        "source_id": "p005",
+        "note": "Seasonal restaurant/kiosk listed on the Restaurants page."
+      },
+      {
+        "name": "Leo's (Leo's Leikkimaa)",
+        "type": "children's play area / entertainment",
+        "source_id": "p001",
+        "note": "Children's play facility referenced from site navigation and The Village page; not an accommodation or restaurant product."
+      },
+      {
+        "name": "~40 retail brand stores (e.g. Gant, Marimekko, Tommy Hilfiger, Kari Traa, Levi's, etc.)",
+        "type": "retail shops",
+        "source_id": "p001",
+        "note": "The core business of the site is retail brand stores; this matches the Shops DataHub product type."
+      }
+    ]
+  },
+  "telemetry": {
+    "workflow_mode": "coarse_tools",
+    "started_at": "2026-09-04T13:53:58.855044+00:00",
+    "finished_at": "2026-09-04T13:56:25.411850+00:00",
+    "duration_ms": 146562,
+    "operations": [
+      {
+        "name": "load_skill",
+        "stage": "stage_0_bootstrap",
+        "started_at": "2026-09-04T13:54:01.505276+00:00",
+        "retry_count": 0,
+        "status": "ok",
+        "finished_at": "2026-09-04T13:54:01.518844+00:00",
+        "duration_ms": 16,
+        "skill_sha256": "fc7f6665a5d6243d4629f7d20784e0cbce216418cfad6fc616699b28f558c738"
+      },
+      {
+        "name": "validate_sources",
+        "stage": "stage_1",
+        "started_at": "2026-09-04T13:54:02.918729+00:00",
+        "retry_count": 0,
+        "status": "ok",
+        "finished_at": "2026-09-04T13:54:03.346946+00:00",
+        "duration_ms": 422,
+        "sources": 1,
+        "documents": 0
+      },
+      {
+        "name": "parse_documents",
+        "stage": "stage_2",
+        "started_at": "2026-09-04T13:54:03.363466+00:00",
+        "retry_count": 0,
+        "documents_requested": 0,
+        "status": "ok",
+        "finished_at": "2026-09-04T13:54:03.378507+00:00",
+        "duration_ms": 16,
+        "documents_parsed": 0,
+        "empty_fast_path": true
+      },
+      {
+        "name": "fetch_seed_pages",
+        "stage": "stage_3",
+        "started_at": "2026-09-04T13:54:03.391029+00:00",
+        "retry_count": 0,
+        "seeds": 1,
+        "status": "ok",
+        "finished_at": "2026-09-04T13:54:04.623329+00:00",
+        "duration_ms": 1234,
+        "fetched": 1,
+        "failures": 0,
+        "total_pages": 1,
+        "total_content_bytes": 261633,
+        "concurrency": 5,
+        "budget_rejections": 0,
+        "evidence_chars_queued": 40138
+      },
+      {
+        "name": "read_context_page",
+        "stage": "stage_3",
+        "started_at": "2026-09-04T13:54:06.098245+00:00",
+        "retry_count": 0,
+        "cursor": "ctx0001",
+        "status": "ok",
+        "finished_at": "2026-09-04T13:54:06.114768+00:00",
+        "duration_ms": 15,
+        "evidence_chunks": 1,
+        "evidence_chars_returned": 40138,
+        "candidate_links": 35,
+        "context_complete": false
+      },
+      {
+        "name": "read_context_page",
+        "stage": "stage_3",
+        "started_at": "2026-09-04T13:54:09.939926+00:00",
+        "retry_count": 0,
+        "cursor": "ctx0002",
+        "status": "ok",
+        "finished_at": "2026-09-04T13:54:09.953162+00:00",
+        "duration_ms": 16,
+        "evidence_chunks": 0,
+        "evidence_chars_returned": 0,
+        "candidate_links": 200,
+        "context_complete": true
+      },
+      {
+        "name": "fetch_selected_pages",
+        "stage": "stage_3",
+        "started_at": "2026-09-04T13:54:58.626973+00:00",
+        "retry_count": 0,
+        "requested": 4,
+        "recovery_pass": false,
+        "status": "ok",
+        "finished_at": "2026-09-04T13:54:59.815592+00:00",
+        "duration_ms": 1187,
+        "fetched": 4,
+        "failures": 0,
+        "total_pages": 5,
+        "total_content_bytes": 852994,
+        "concurrency": 5,
+        "budget_rejections": 0,
+        "evidence_chars_queued": 100422
+      },
+      {
+        "name": "read_context_page",
+        "stage": "stage_3",
+        "started_at": "2026-09-04T13:55:01.358418+00:00",
+        "retry_count": 0,
+        "cursor": "ctx0003",
+        "status": "ok",
+        "finished_at": "2026-09-04T13:55:01.375738+00:00",
+        "duration_ms": 16,
+        "evidence_chunks": 1,
+        "evidence_chars_returned": 28219,
+        "candidate_links": 0,
+        "context_complete": false
+      },
+      {
+        "name": "read_context_page",
+        "stage": "stage_3",
+        "started_at": "2026-09-04T13:55:03.415004+00:00",
+        "retry_count": 0,
+        "cursor": "ctx0004",
+        "status": "ok",
+        "finished_at": "2026-09-04T13:55:03.431528+00:00",
+        "duration_ms": 16,
+        "evidence_chunks": 1,
+        "evidence_chars_returned": 31126,
+        "candidate_links": 0,
+        "context_complete": false
+      },
+      {
+        "name": "read_context_page",
+        "stage": "stage_3",
+        "started_at": "2026-09-04T13:55:05.537700+00:00",
+        "retry_count": 0,
+        "cursor": "ctx0005",
+        "status": "ok",
+        "finished_at": "2026-09-04T13:55:05.557786+00:00",
+        "duration_ms": 16,
+        "evidence_chunks": 2,
+        "evidence_chars_returned": 41077,
+        "candidate_links": 21,
+        "context_complete": false
+      },
+      {
+        "name": "read_context_page",
+        "stage": "stage_3",
+        "started_at": "2026-09-04T13:55:08.069620+00:00",
+        "retry_count": 0,
+        "cursor": "ctx0006",
+        "status": "ok",
+        "finished_at": "2026-09-04T13:55:08.090374+00:00",
+        "duration_ms": 32,
+        "evidence_chunks": 0,
+        "evidence_chars_returned": 0,
+        "candidate_links": 6,
+        "context_complete": true
+      },
+      {
+        "name": "record_scope",
+        "stage": "stage_4",
+        "started_at": "2026-09-04T13:55:48.281235+00:00",
+        "retry_count": 0,
+        "status": "ok",
+        "finished_at": "2026-09-04T13:55:48.296779+00:00",
+        "duration_ms": 16,
+        "scope_status": "scope_ambiguous"
+      },
+      {
+        "name": "submit_extraction",
+        "stage": "stage_5",
+        "started_at": "2026-09-04T13:55:58.796153+00:00",
+        "retry_count": 0,
+        "submission": 1,
+        "status": "ok",
+        "finished_at": "2026-09-04T13:55:59.013419+00:00",
+        "duration_ms": 219,
+        "valid": true,
+        "error_count": 0,
+        "warning_count": 0
+      },
+      {
+        "name": "finalize_outputs",
+        "stage": "stage_7",
+        "started_at": "2026-09-04T13:56:18.789900+00:00",
+        "retry_count": 0,
+        "status": "ok",
+        "finished_at": "2026-09-04T13:56:19.315557+00:00",
+        "duration_ms": 531,
+        "artifacts": 6
+      }
+    ],
+    "model": {
+      "turns": 13,
+      "transcript_messages": 1691,
+      "tool_calls": 12,
+      "tool_errors": 0
+    },
+    "terminal_status": "completed",
+    "terminal_error_code": null,
+    "evidence_chars_returned": 140560,
+    "context_chars_queued": 196733,
+    "context_pages_queued": 6,
+    "context_pages_delivered": 6
+  }
+}

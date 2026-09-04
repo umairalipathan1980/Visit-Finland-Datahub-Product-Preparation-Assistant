@@ -1,0 +1,13 @@
+{
+  "contract_version": "v1",
+  "product_type": "shops",
+  "website_urls": [
+    "https://www.kotilaituri.fi/"
+  ],
+  "document_files": [],
+  "languages": [
+    "fi",
+    "en"
+  ],
+  "scope_confirmation": "auto_confirm_single"
+}

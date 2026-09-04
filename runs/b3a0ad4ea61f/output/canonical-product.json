@@ -1,0 +1,10 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-accommodation-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-04T13:56:18.862579+00:00"
+  },
+  "product_type": "accommodation",
+  "fields": {}
+}

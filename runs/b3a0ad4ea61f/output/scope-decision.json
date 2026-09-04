@@ -1,0 +1,51 @@
+{
+  "status": "scope_ambiguous",
+  "error_code": "product_boundary_unclear",
+  "reason": "All available evidence (homepage, About Us, The Village, Floorplan & Stores, and Restaurants pages of www.helsinkioutlet.fi) describes 'Helsinki Outlet', a retail shopping outlet village on Ring Road III between Helsinki and Vantaa (address: Tatti 17, 00760 Helsinki). The site offers ~40 clothing/home/beauty/sports brand stores, an online shop, on-site restaurants (Espresso House, Pizza Hut, Villa Severino, seasonal Pingviini Ice Cream Kiosk), and a children's play area (Leo's Leikkimaa). No page in the retrieved evidence bundle (including About Us/Our Story, The Village, Floorplan & Stores, Restaurants) mentions any room, bed, overnight stay, check-in/out, or lodging offering of any kind. This business profile matches the Shops product type (closest categories: 'shopping_center', 'outlet' in the Shops taxonomy group) rather than Accommodation. Because this run's product_type is fixed as 'accommodation' and no accommodation/lodging product can be identified anywhere on the site, the product boundary for an Accommodation record cannot be resolved -- there is no candidate to select, so no 'product' value can be recorded. This is recorded as ambiguous/unresolved scope (closest available error_code) rather than a false 'resolved' Accommodation record, per the instruction to never invent product facts.",
+  "product": null,
+  "excluded": [
+    {
+      "item": "Helsinki Outlet Shopping Village (entire site, www.helsinkioutlet.fi)",
+      "reason": "Retail outlet shopping village business; matches the Shops DataHub product type, not Accommodation. No lodging/overnight-stay offering found anywhere in the retrieved evidence."
+    }
+  ],
+  "additional_products": [],
+  "out_of_type_facilities": [
+    {
+      "name": "Espresso House",
+      "type": "restaurant/cafe",
+      "source_id": "p005",
+      "note": "On-site restaurant listed on the Restaurants page; a different DataHub product type than Accommodation."
+    },
+    {
+      "name": "Pizza Hut",
+      "type": "restaurant",
+      "source_id": "p005",
+      "note": "On-site restaurant listed on the Restaurants page."
+    },
+    {
+      "name": "Villa Severino",
+      "type": "restaurant",
+      "source_id": "p005",
+      "note": "On-site restaurant listed on the Restaurants page."
+    },
+    {
+      "name": "Pingviini Ice Cream Kiosk",
+      "type": "restaurant (seasonal)",
+      "source_id": "p005",
+      "note": "Seasonal restaurant/kiosk listed on the Restaurants page."
+    },
+    {
+      "name": "Leo's (Leo's Leikkimaa)",
+      "type": "children's play area / entertainment",
+      "source_id": "p001",
+      "note": "Children's play facility referenced from site navigation and The Village page; not an accommodation or restaurant product."
+    },
+    {
+      "name": "~40 retail brand stores (e.g. Gant, Marimekko, Tommy Hilfiger, Kari Traa, Levi's, etc.)",
+      "type": "retail shops",
+      "source_id": "p001",
+      "note": "The core business of the site is retail brand stores; this matches the Shops DataHub product type."
+    }
+  ]
+}

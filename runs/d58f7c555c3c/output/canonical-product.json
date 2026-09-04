@@ -1,0 +1,22 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-shops-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-04T14:12:33.355974+00:00"
+  },
+  "product_type": "shops",
+  "fields": {
+    "name": {
+      "fi": "Sisustuskauppa Kotilaituri"
+    },
+    "description": {
+      "fi": "Kotilaiturin sisustuskaupassa on myynniss\u00e4 kattava valikoima sisustustuotteita, kuten DBKD, Ernst, Eva Solo, Gift Label, Lauritzon, Madam Stoltz, VM Carpet, Helatukku sek\u00e4 kuratoitu valikoima 50-80-luvun nordic vintage ja design tuotteita, -astioita, valaisimia sek\u00e4 kalusteita."
+    },
+    "address": {
+      "street": "Vuorikatu 13",
+      "postal_code": "10900",
+      "city": "Hanko"
+    }
+  }
+}

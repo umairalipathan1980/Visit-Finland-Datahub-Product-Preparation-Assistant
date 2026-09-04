@@ -1,0 +1,85 @@
+{
+  "run_metadata": {
+    "schema_name": "poc-accommodation-schema-v1",
+    "schema_version": "0.2.0-poc",
+    "category_taxonomy_version": "poc-subset-0.3",
+    "generated_at": "2026-09-04T00:00:00Z"
+  },
+  "product_type": "accommodation",
+  "fields": {
+    "name": {
+      "fi": {
+        "status": "missing",
+        "notes": "No accommodation product identified on this site; it is a retail shopping outlet village ('Helsinki Outlet'), not a lodging business. See scope decision (product_boundary_unclear)."
+      },
+      "en": {
+        "status": "missing",
+        "notes": "No accommodation product identified on this site; it is a retail shopping outlet village ('Helsinki Outlet'), not a lodging business. See scope decision (product_boundary_unclear)."
+      }
+    },
+    "description": {
+      "fi": {
+        "status": "missing"
+      },
+      "en": {
+        "status": "missing",
+        "notes": "Site 'Our Story'/'About us' content describes an outlet shopping village business history and sustainability strategy, not an accommodation offering, so it is not extracted as an Accommodation description."
+      }
+    },
+    "address": {
+      "status": "missing",
+      "notes": "An address (Tatti 17, 00760 Helsinki) is stated on the site, but it belongs to the Helsinki Outlet shopping village entity, not to any identified Accommodation product. Not attached to a non-existent Accommodation record; see scope decision."
+    },
+    "coordinates": {
+      "status": "missing"
+    },
+    "contact": {
+      "status": "missing",
+      "notes": "General site contact (info@helsinkioutlet.fi) exists but pertains to the shopping village business, not an Accommodation product."
+    },
+    "categories": {
+      "status": "missing",
+      "notes": "No source content supports any Accommodation-taxonomy category (hotel, hostel, cottage, etc.). The business matches Shops categories ('shopping_center', 'outlet') instead, which are out of scope for this Accommodation schema."
+    },
+    "accessibility": {
+      "status": "missing"
+    },
+    "sustainability_label": {
+      "status": "missing",
+      "notes": "The site's About Us page contains general sustainability/environmental claims (energy efficiency, waste management, LEED Gold certification) about the shopping village, but these describe the retail business, not an Accommodation product, so are not extracted here."
+    },
+    "stf_status": {
+      "status": "missing"
+    },
+    "capacity": {
+      "status": "missing"
+    },
+    "pricing": {
+      "status": "missing"
+    },
+    "booking_url": {
+      "status": "missing"
+    },
+    "availability": {
+      "status": "missing"
+    },
+    "opening_hours": {
+      "status": "missing",
+      "notes": "Village opening hours (Mon-Sat 10:00-20:00, Sun 10:00-18:00) are stated but belong to the retail shopping village, not to any Accommodation product."
+    },
+    "amenities": {
+      "status": "missing"
+    },
+    "languages_spoken": {
+      "status": "missing"
+    },
+    "images": {
+      "status": "not_in_scope"
+    }
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  }
+}

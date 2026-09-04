@@ -178,6 +178,7 @@ Repeat `--website-url` and `--document` for multiple inputs. Avoid Uvicorn `--re
 | --- | --- | --- |
 | `POST` | `/runs` | Start a run |
 | `GET` | `/runs` | List runs |
+| `GET` | `/taxonomy/categories` | List allowed categories for a product type |
 | `GET` | `/runs/{run_id}` | Get status and artifacts |
 | `GET` | `/runs/{run_id}/events` | Stream progress with SSE |
 | `POST` | `/runs/{run_id}/cancel` | Cancel a run |

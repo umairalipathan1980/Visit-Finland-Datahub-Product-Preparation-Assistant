@@ -179,6 +179,77 @@ def test_list_runs_newest_first(client):
     assert ids_in_order == [second, first]
 
 
+def test_category_taxonomy_is_filtered_by_product_type(client):
+    accommodation_resp = client.get("/taxonomy/categories", params={"product_type": "accommodation"})
+    shops_resp = client.get("/taxonomy/categories", params={"product_type": "shops"})
+
+    assert accommodation_resp.status_code == 200
+    assert shops_resp.status_code == 200
+    accommodation = accommodation_resp.json()
+    shops = shops_resp.json()
+    accommodation_ids = {category["id"] for category in accommodation["categories"]}
+    shops_ids = {category["id"] for category in shops["categories"]}
+    assert accommodation["taxonomy_version"]
+    assert accommodation["product_type"] == "accommodation"
+    assert shops["product_type"] == "shops"
+    assert "hotel" in accommodation_ids
+    assert "shopping_center" not in accommodation_ids
+    assert "shopping_center" in shops_ids
+    assert "hotel" not in shops_ids
+    assert all(category["group"] == "accommodation" for category in accommodation["categories"])
+    assert all(category["group"] == "shops" for category in shops["categories"])
+
+
+def test_category_taxonomy_rejects_unknown_product_type(client):
+    resp = client.get("/taxonomy/categories", params={"product_type": "restaurants"})
+    assert resp.status_code == 400
+
+
+@pytest.mark.parametrize(
+    ("product_type", "valid_category", "invalid_category"),
+    [
+        ("accommodation", "hotel", "shopping_center"),
+        ("shops", "shopping_center", "hotel"),
+    ],
+)
+def test_approve_validates_categories_for_product_type(
+    client, product_type, valid_category, invalid_category,
+):
+    resp = client.post(
+        "/runs",
+        data={"website_urls": ["https://example.fi"], "product_type": product_type},
+    )
+    run_id = resp.json()["run_id"]
+    time.sleep(0.4)
+
+    invalid_resp = client.post(
+        f"/runs/{run_id}/approve",
+        json={"fields": {"categories": [invalid_category]}},
+    )
+    assert invalid_resp.status_code == 400
+    assert invalid_category in invalid_resp.json()["detail"]["invalid_categories"]
+
+    valid_resp = client.post(
+        f"/runs/{run_id}/approve",
+        json={"fields": {"categories": [valid_category]}},
+    )
+    assert valid_resp.status_code == 200
+    approved = client.get(f"/runs/{run_id}/artifacts/approved-product.json").json()
+    assert approved["fields"]["categories"] == [valid_category]
+
+
+def test_approve_rejects_duplicate_categories(client):
+    resp = client.post("/runs", data={"website_urls": ["https://example.fi"]})
+    run_id = resp.json()["run_id"]
+    time.sleep(0.4)
+
+    approve_resp = client.post(
+        f"/runs/{run_id}/approve",
+        json={"fields": {"categories": ["hotel", "hotel"]}},
+    )
+    assert approve_resp.status_code == 400
+
+
 def test_approve_persists_edited_fields_as_new_artifact(client):
     resp = client.post("/runs", data={"website_urls": ["https://example.fi"]})
     run_id = resp.json()["run_id"]

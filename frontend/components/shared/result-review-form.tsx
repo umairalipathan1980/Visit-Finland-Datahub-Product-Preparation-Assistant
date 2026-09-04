@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, CheckCircle2, ExternalLink } from "lucide-react";
+import { Loader2, CheckCircle2, ExternalLink, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -13,8 +14,8 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FieldStatusBadge } from "@/components/shared/status-badge";
 import { getFieldSpecs, type FieldSpec } from "@/lib/fields";
-import type { ExtractionResult, FieldEnvelope, FieldEvidence, SourceReference } from "@/lib/api";
-import { approveRun } from "@/lib/api";
+import type { CategoryOption, ExtractionResult, FieldEnvelope, FieldEvidence, SourceReference } from "@/lib/api";
+import { approveRun, getCategoryTaxonomy } from "@/lib/api";
 import { toast } from "sonner";
 
 function asEnvelope(v: unknown): FieldEnvelope {
@@ -143,7 +144,7 @@ function plainTaxonomyValue(value: string): string {
 
 function normalizeArrayValues(spec: FieldSpec, values: string[]): string[] {
   if (spec.key !== "categories" && spec.key !== "amenities") return values;
-  return values.map(plainTaxonomyValue);
+  return Array.from(new Set(values.map(plainTaxonomyValue)));
 }
 
 function initialState(result: ExtractionResult, fieldSpecs: FieldSpec[]): Record<string, EditableValue> {
@@ -165,7 +166,7 @@ function initialState(result: ExtractionResult, fieldSpecs: FieldSpec[]): Record
     } else if (spec.kind === "array") {
       const env = asEnvelope(raw);
       const values = normalizeArrayValues(spec, (env.value as string[]) ?? []);
-      state[spec.key] = { value: values.join(", ") };
+      state[spec.key] = { value: spec.key === "categories" ? values : values.join(", ") };
     } else if (spec.kind === "json") {
       const env = asEnvelope(raw);
       state[spec.key] = {
@@ -202,10 +203,10 @@ function buildApprovalPayload(
       }
       if (Object.keys(out).length > 0) payload[spec.key] = out;
     } else if (spec.kind === "array") {
-      const items = normalizeArrayValues(
-        spec,
-        String(entry.value ?? "").split(",").map((s) => s.trim()).filter(Boolean),
-      );
+      const rawItems = Array.isArray(entry.value)
+        ? entry.value.map(String)
+        : String(entry.value ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+      const items = normalizeArrayValues(spec, rawItems);
       if (items.length > 0) payload[spec.key] = items;
     } else if (spec.kind === "json") {
       const value = String(entry.value ?? "").trim();
@@ -217,13 +218,116 @@ function buildApprovalPayload(
   return payload;
 }
 
+function categoryLabel(category: CategoryOption): string {
+  if (category.label_fi && category.label_fi !== category.label_en) {
+    return `${category.label_en} / ${category.label_fi}`;
+  }
+  return category.label_en;
+}
+
+function CategoryEditor({
+  value, options, loading, error, onChange,
+}: {
+  value: EditableValue;
+  options: CategoryOption[];
+  loading: boolean;
+  error: string | null;
+  onChange: (next: EditableValue) => void;
+}) {
+  const selected = Array.isArray(value.value) ? value.value.map(String) : [];
+  const [pendingCategory, setPendingCategory] = useState<string | null>(null);
+  const optionsById = new Map(options.map((option) => [option.id, option]));
+  const available = options.filter((option) => !selected.includes(option.id));
+  const hasUnknown = !loading && !error && selected.some((id) => !optionsById.has(id));
+
+  function addCategory() {
+    if (!pendingCategory || selected.includes(pendingCategory)) return;
+    onChange({ value: [...selected, pendingCategory] });
+    setPendingCategory(null);
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex min-h-7 flex-wrap gap-2">
+        {selected.length === 0 && (
+          <p className="text-sm text-muted-foreground">No categories selected.</p>
+        )}
+        {selected.map((id) => {
+          const option = optionsById.get(id);
+          const isUnknown = !loading && !error && !option;
+          return (
+            <Badge key={id} variant={isUnknown ? "destructive" : "secondary"} className="h-7 gap-1.5 pr-1">
+              {option ? categoryLabel(option) : id}
+              <button
+                type="button"
+                aria-label={`Remove ${option ? categoryLabel(option) : id}`}
+                className="rounded-full p-0.5 hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                onClick={() => onChange({ value: selected.filter((categoryId) => categoryId !== id) })}
+              >
+                <X className="size-3" />
+              </button>
+            </Badge>
+          );
+        })}
+      </div>
+
+      <div className="flex max-w-xl gap-2">
+        <Select
+          value={pendingCategory}
+          onValueChange={setPendingCategory}
+          disabled={loading || Boolean(error) || available.length === 0}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue
+              placeholder={loading
+                ? "Loading categories..."
+                : available.length === 0
+                  ? "All categories selected"
+                  : "Select a category"}
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {available.map((option) => (
+              <SelectItem key={option.id} value={option.id}>{categoryLabel(option)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button type="button" variant="outline" onClick={addCategory} disabled={!pendingCategory}>
+          <Plus className="size-4" /> Add
+        </Button>
+      </div>
+
+      {error && <p className="text-xs text-destructive">{error}</p>}
+      {hasUnknown && (
+        <p className="text-xs text-destructive">
+          Remove unknown legacy categories before approving this record.
+        </p>
+      )}
+    </div>
+  );
+}
+
 function FieldEditor({
-  spec, value, onChange,
+  spec, value, categoryOptions, categoryLoading, categoryError, onChange,
 }: {
   spec: FieldSpec;
   value: EditableValue;
+  categoryOptions: CategoryOption[];
+  categoryLoading: boolean;
+  categoryError: string | null;
   onChange: (next: EditableValue) => void;
 }) {
+  if (spec.key === "categories") {
+    return (
+      <CategoryEditor
+        value={value}
+        options={categoryOptions}
+        loading={categoryLoading}
+        error={categoryError}
+        onChange={onChange}
+      />
+    );
+  }
   if (spec.kind === "object") {
     return (
       <div className="grid grid-cols-2 gap-3">
@@ -314,6 +418,36 @@ export function ResultReviewForm({
   const [state, setState] = useState(() => initialState(result, fieldSpecs));
   const [submitting, setSubmitting] = useState(false);
   const [approved, setApproved] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
+  const [categoryLoading, setCategoryLoading] = useState(true);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let ignored = false;
+    void getCategoryTaxonomy(result.product_type)
+      .then((taxonomy) => {
+        if (!ignored) setCategoryOptions(taxonomy.categories);
+      })
+      .catch((error: unknown) => {
+        if (!ignored) {
+          setCategoryOptions([]);
+          setCategoryError(error instanceof Error ? error.message : "Could not load category options.");
+        }
+      })
+      .finally(() => {
+        if (!ignored) setCategoryLoading(false);
+      });
+    return () => {
+      ignored = true;
+    };
+  }, [result.product_type]);
+
+  const selectedCategories = Array.isArray(state.categories?.value)
+    ? state.categories.value.map(String)
+    : [];
+  const hasUnknownCategory = !categoryLoading
+    && !categoryError
+    && selectedCategories.some((id) => !categoryOptions.some((option) => option.id === id));
 
   async function handleApprove() {
     setSubmitting(true);
@@ -349,6 +483,9 @@ export function ResultReviewForm({
               <FieldEditor
                 spec={spec}
                 value={state[spec.key]}
+                categoryOptions={categoryOptions}
+                categoryLoading={categoryLoading}
+                categoryError={categoryError}
                 onChange={(next) => setState((prev) => ({ ...prev, [spec.key]: next }))}
               />
               <EvidenceReferences evidence={evidence} sourcesById={sourcesById} />
@@ -367,7 +504,7 @@ export function ResultReviewForm({
               ? "Approved — saved as approved-product.json for this run."
               : "Review the fields above, correct anything needed, then approve to save the final record."}
           </p>
-          <Button onClick={handleApprove} disabled={submitting} className="gap-2">
+          <Button onClick={handleApprove} disabled={submitting || hasUnknownCategory} className="gap-2">
             {submitting ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}
             {approved ? "Re-approve" : "Approve and save"}
           </Button>

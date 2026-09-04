@@ -35,6 +35,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PACKAGE_DIR = REPO_ROOT / "visit-finland-datahub-accommodation"
 WORKSPACE_BASE = REPO_ROOT / "runs"
 DEFAULT_ENV_FILE = REPO_ROOT / ".env"
+CATEGORY_TAXONOMY_FILE = PACKAGE_DIR / "schemas" / "datahub-categories.json"
+PRODUCT_CATEGORY_GROUPS = {
+    "accommodation": "accommodation",
+    "shops": "shops",
+}
 
 # The fixed enum from Section 15: an artifact is addressed by name, never by
 # a client-supplied path, so a workspace path can never reach the browser.
@@ -66,6 +71,42 @@ def _read_json_or_none(path: Path):
         return json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return None
+
+
+def _categories_for_product(product_type: str) -> tuple[dict, list[dict]]:
+    group = PRODUCT_CATEGORY_GROUPS.get(product_type)
+    if group is None:
+        raise HTTPException(status_code=400, detail="product_type must be 'accommodation' or 'shops'")
+    taxonomy = _read_json_or_none(CATEGORY_TAXONOMY_FILE)
+    if not isinstance(taxonomy, dict) or not isinstance(taxonomy.get("categories"), list):
+        raise HTTPException(status_code=500, detail="category taxonomy is unavailable")
+    categories = [
+        category
+        for category in taxonomy["categories"]
+        if isinstance(category, dict) and category.get("group") == group
+    ]
+    return taxonomy, categories
+
+
+def _validate_approved_categories(fields: dict, product_type: str) -> None:
+    if "categories" not in fields:
+        return
+    categories = fields["categories"]
+    if not isinstance(categories, list) or any(not isinstance(value, str) for value in categories):
+        raise HTTPException(status_code=400, detail="'fields.categories' must be an array of category IDs")
+    if len(categories) != len(set(categories)):
+        raise HTTPException(status_code=400, detail="'fields.categories' must not contain duplicates")
+    _taxonomy, allowed_categories = _categories_for_product(product_type)
+    allowed_ids = {category.get("id") for category in allowed_categories}
+    invalid = [value for value in categories if value not in allowed_ids]
+    if invalid:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "message": f"invalid categories for product type '{product_type}'",
+                "invalid_categories": invalid,
+            },
+        )
 
 
 def _product_name_from_record(record: dict | None) -> str | None:
@@ -171,6 +212,16 @@ app.add_middleware(
 async def health() -> dict:
     """Unauthenticated liveness/readiness probe target for container platforms."""
     return {"status": "ok"}
+
+
+@app.get("/taxonomy/categories")
+async def list_categories(product_type: str) -> dict:
+    taxonomy, categories = _categories_for_product(product_type)
+    return {
+        "taxonomy_version": taxonomy.get("taxonomy_version"),
+        "product_type": product_type,
+        "categories": categories,
+    }
 
 
 def _workspace_for(run_id: str) -> Path:
@@ -412,9 +463,11 @@ async def approve_run(run_id: str, payload: dict = Body(...)):
 
     approved_at = _now_iso()
     request = _read_json_or_none(workspace / "input" / "request.json") or {}
+    product_type = request.get("product_type", "accommodation")
+    _validate_approved_categories(fields, product_type)
     approved_record = {
         "run_metadata": {"approved_at": approved_at, "source": "user-approved"},
-        "product_type": request.get("product_type", "accommodation"),
+        "product_type": product_type,
         "fields": fields,
     }
     (workspace / "output" / "approved-product.json").write_text(

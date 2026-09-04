@@ -2,6 +2,19 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8010"
 
 export type ProductType = "accommodation" | "shops";
 
+export interface CategoryOption {
+  id: string;
+  group: "accommodation" | "shops";
+  label_en: string;
+  label_fi?: string;
+}
+
+export interface CategoryTaxonomy {
+  taxonomy_version: string | null;
+  product_type: ProductType;
+  categories: CategoryOption[];
+}
+
 export type RunStatus =
   | "queued"
   | "interrupted"
@@ -94,7 +107,10 @@ async function asJson<T>(resp: Response): Promise<T> {
     let detail = resp.statusText;
     try {
       const body = await resp.json();
-      detail = body.detail ?? detail;
+      const responseDetail = body.detail;
+      detail = typeof responseDetail === "string"
+        ? responseDetail
+        : JSON.stringify(responseDetail ?? body);
     } catch {
       // response body wasn't JSON; fall back to statusText
     }
@@ -123,6 +139,12 @@ export async function getRun(runId: string): Promise<RunDetail> {
 
 export async function listRuns(): Promise<{ runs: RunSummary[] }> {
   const resp = await fetch(`${API_BASE}/runs`, { cache: "no-store" });
+  return asJson(resp);
+}
+
+export async function getCategoryTaxonomy(productType: ProductType): Promise<CategoryTaxonomy> {
+  const params = new URLSearchParams({ product_type: productType });
+  const resp = await fetch(`${API_BASE}/taxonomy/categories?${params}`, { cache: "no-store" });
   return asJson(resp);
 }
 
